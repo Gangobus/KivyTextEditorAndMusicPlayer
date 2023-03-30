@@ -1,5 +1,4 @@
 import os
-from kivy.core.audio import SoundLoader
 from kivy.clock import Clock
 from tkinter import Tk, filedialog
 from docx import Document
@@ -13,7 +12,6 @@ from kivy.core.text import LabelBase
 from kivy.uix.screenmanager import Screen, ScreenManager
 from Window1txt import Window1txt
 from Window2txt import Window2txt
-
 class MainApp(MDApp):
     def build(self):
         Window.size = [1600, 800]
@@ -29,4 +27,7 @@ class MainApp(MDApp):
         sm.add_widget(Window1txt(name="S1T"))
         sm.add_widget(Window2txt(name="S2T"))
         return sm
+    def fps_check(self):
+        self.fps_monitor_start()
+
 MainApp().run()

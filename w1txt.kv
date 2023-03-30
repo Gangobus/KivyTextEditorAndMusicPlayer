@@ -11,7 +11,8 @@
                 MDIconButton
                     icon: "file-music"
                     pos_hint:{"center_x": .5, "center_y": .5}
-                    on_release: root.choose_file(self)
+                    on_release:
+                        root.choose_file(self)
                 MDIconButton:
                     icon: "file-video"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -27,12 +28,15 @@
                     adaptive_height: True
                 MDIconButton:
                     icon: "play-pause"
+                    id: play_button
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
+                    on_release:
                 MDIconButton:
                     icon: "chevron-right"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
+                    on_release:
                 MDIconButton:
                     icon:"volume-mute"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -75,7 +79,7 @@
                         pos_hint:{"center_x": .5, "center_y": .5}
                         adaptive_height: True
                         on_release:
-                            root.fps_check()
+                            app.fps_check()
             MDBoxLayout: # Вторая строчка кнопок
                 size_hint: 1, .5
                 padding: 4
@@ -136,6 +140,7 @@
                     size_hint: .1, 1
 
                 MDSlider: # слайдер перемотки
+                    id: seek_slider
                     hint: False
 
                 MDLabel: # время всей аудиозаписи
