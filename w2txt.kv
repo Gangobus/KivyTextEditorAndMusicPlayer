@@ -1,0 +1,246 @@
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+<Window2txt>:
+    BoxLayout:
+        orientation: 'vertical'
+        md_bg_color: get_color_from_hex("#010101")
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: 1, .25
+            BoxLayout: # панель кнопок 1-ая сточка
+                size_hint: 1, .5
+                MDIconButton
+                    icon: "file-music"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    on_release: root.choose_file(self)
+                MDIconButton:
+                    icon: "file-video"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                MDIconButton:
+                    icon: "export"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+
+                MDIconButton:
+                    icon: "chevron-left"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                    on_press: root.rewind(self)
+                MDIconButton:
+                    icon: "play-pause"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                    on_press: root.play_pause(self)
+                MDIconButton:
+                    icon: "chevron-right"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                    on_press: root.fast_forward(self)
+                MDIconButton:
+                    icon:"volume-mute"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                    on_press: root.mute(self)
+                BoxLayout: # Регулировка громкости
+                    size_hint: .2 , 1
+                    MDSlider:
+                        hint: False
+                        adaptive_height: True
+                MDIconButton:
+                    icon: "volume-high"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                MDIconButton:
+                    icon: "book-information-variant"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                Label:
+                BoxLayout: # ввод времени и кнопка активации распознавания
+                    padding: 1
+                    spacing: 3
+                    TextInput:
+                        size_hint: 1, .6
+                        multiline: False
+                        font_size: 14
+                        text: "0:00:00"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                    TextInput:
+                        size_hint: 1, .6
+                        multiline: False
+                        font_size: 14
+                        text: "0:00:00"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                    MDIconButton:
+                        icon: "microphone-message"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                    MDIconButton:
+                        icon:"bug-check-outline"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release:
+                            root.fps_check()
+
+            MDBoxLayout: # Вторая строчка кнопок
+                size_hint: 1, .5
+                padding: 4
+                spacing: 5
+                MDRectangleFlatButton:
+                    text:"[Время]"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<М1>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<М2>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<М3>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<М4>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<Ж1>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<Ж2>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<Ж3>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<Ж4>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<Неразбочивая речь>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+                MDRectangleFlatButton:
+                    text:"<Неразбочивая речь на фоне>"
+                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
+                    adaptive_height: True
+
+
+            MDBoxLayout: # текущее время поспроизведения
+                size_hint: 1, .4
+                MDLabel:
+                    text: "0:00:00"
+                    adaptive_height: True
+                    bold: True
+                    halign: "center"
+                    size_hint: .1, 1
+
+                MDSlider: # слайдер перемотки
+                    hint: False
+
+                MDLabel: # время всей аудиозаписи
+                    text: "1:56:23"
+                    adaptive_height: True
+                    bold: True
+                    halign: "center"
+                    size_hint: .1, 1
+
+        BoxLayout: # разбиение нижней области вертикально на 2 части
+            orientation:'horizontal'
+            BoxLayout: # разбиение на области с кнопками и область ввода текста(левая)
+                orientation: "vertical"
+                BoxLayout:
+                    orientation:'horizontal'
+                    size_hint: 1, .1
+                    MDIconButton:
+                        icon: "folder-open-outline"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release: root.open_txt_file_left_dialog()
+                    MDIconButton:
+                        icon: "content-save-outline"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release: root.save_left_text_to_file()
+                    MDIconButton:
+                        icon:"format-font-size-decrease"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release: root.decrease_font_size1()
+                    MDIconButton:
+                        icon:"format-font-size-increase"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release: root.increase_font_size1()
+                    Label:
+
+
+
+                TextInput:
+                    text: "text editor area 1!"
+                    auto_indent: "False"
+                    base_direction: "ltr"
+                    id: txt1
+                    font_name: "TimesNewRoman"
+
+            BoxLayout: # разбиение на области с кнопками и область ввода текста(правая)
+                orientation: "vertical"
+                BoxLayout:
+                    orientation:'horizontal'
+                    size_hint: 1, .1
+                    MDIconButton:
+                        icon: "folder-open-outline"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        on_release:root.open_txt_file_right_dialog()
+                    MDIconButton:
+                        icon: "content-save-outline"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        on_release: root.save_right_text_to_file()
+
+                    Label:
+                    MDIconButton:
+                        icon:"vector-intersection"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release: root.find_differences()
+                        state: 'normal'
+                    MDIconButton:
+                        icon:"vector-combine"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release: root.remove_differences()
+                        state: 'normal'
+                    MDIconButton:
+                        icon: "dock-window"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release:
+                            root.manager.current = 'S1T'
+                TextInput:
+                    text: "text editor area 2!"
+                    base_direction: "ltr"
+                    id: txt2
+                    font_name: "TimesNewRoman"
+        GridLayout:
+            rows: 1
+            size_hint: 1, .05
+            MDLabel:
+                font_size: "11px"
+                text:"Имя файла: 'test_file.mp3'"
+            MDLabel:
+                font_size: "11px"
+                text:"Длительность: 1:56:23"
+            MDLabel:
+                text:"Рармер файла: 36.32МБ"
+                font_size: "11px"
+            MDLabel:
+                text:"Частота дискретизации: 44100Гц"
+                font_size: "11px"
+            MDLabel:
+                text:"Интенсивность звука:  дБ"
+                font_size: "11px"
