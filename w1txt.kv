@@ -11,8 +11,8 @@
                 MDIconButton
                     icon: "file-music"
                     pos_hint:{"center_x": .5, "center_y": .5}
-                    on_release:
-                        root.choose_file(self)
+                    on_release: root.open_music_file_dialog(self)
+
                 MDIconButton:
                     icon: "file-video"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -27,11 +27,15 @@
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
                 MDIconButton:
-                    icon: "play-pause"
-                    id: play_button
+                    icon: "play-circle-outline"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
-                    on_release:
+                    on_release: root.play_music()
+                MDIconButton:
+                    icon: "pause-circle-outline"
+                    adaptive_height: True
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.stop_music()
                 MDIconButton:
                     icon: "chevron-right"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -133,6 +137,7 @@
             MDBoxLayout: # текущее время поспроизведения
                 size_hint: 1, .4
                 MDLabel:
+                    id: timenow
                     text: "0:00:00"
                     adaptive_height: True
                     bold: True
@@ -193,21 +198,51 @@
                     id: txt1
                     font_name: "TimesNewRoman"
 
-        GridLayout:
-            rows: 1
-            size_hint: 1, .05
+        BoxLayout:
+            size_hint: 1, .02
             MDLabel:
+                halign:"center"
                 font_size: "11px"
-                text:"Имя файла: 'test_file.mp3'"
+                text:"Имя файла:"
             MDLabel:
+                halign:"center"
                 font_size: "11px"
-                text:"Длительность: 1:56:23"
+                text:"Длительность:"
             MDLabel:
-                text:"Рармер файла: 3.36МБ"
+                halign:"center"
+                text:"Рармер файла:"
                 font_size: "11px"
             MDLabel:
-                text:"Частота дискретизации: 44100Гц"
+                halign:"center"
+                text:"Частота дискретизации: "
                 font_size: "11px"
             MDLabel:
+                halign:"center"
                 text:"Интенсивность звука:  дБ"
+                font_size: "11px"
+        BoxLayout:
+            size_hint: 1, .03
+            MDLabel:
+                id: mfname
+                halign:"center"
+                font_size: "11px"
+                text:
+            MDLabel:
+                halign:"center"
+                id: mfdur
+                font_size: "11px"
+                text:
+            MDLabel:
+                halign:"center"
+                id: mfsize
+                text:
+                font_size: "11px"
+            MDLabel:
+                halign:"center"
+                id: mfdiscr
+                text:
+                font_size: "11px"
+            MDLabel:
+                halign:"center"
+                text:
                 font_size: "11px"
