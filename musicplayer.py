@@ -5,6 +5,7 @@ from kivy.core.audio import SoundLoader
 from mutagen.mp3 import MP3
 from kivy.clock import Clock
 
+
 class TopMusicBar(BoxLayout):
 
     def __init__(self, **kwargs):
