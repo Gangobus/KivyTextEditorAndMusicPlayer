@@ -63,13 +63,14 @@
                     padding: 1
                     spacing: 3
                     TextInput:
-                        size_hint: 1, .6
+
+                        size_hint: .1, .6
                         multiline: False
                         font_size: 14
                         text: "0:00:00"
                         pos_hint:{"center_x": .5, "center_y": .5}
                     TextInput:
-                        size_hint: 1, .6
+                        size_hint: .1, .6
                         multiline: False
                         font_size: 14
                         text: "0:00:00"
@@ -84,6 +85,27 @@
                         adaptive_height: True
                         on_release:
                             app.fps_check()
+            MDBoxLayout: # текущее время поспроизведения
+                size_hint: 1, .4
+                MDLabel:
+                    id: musictimenow
+                    text: "0:00:00"
+                    adaptive_height: True
+                    bold: True
+                    halign: "center"
+                    size_hint: .1, 1
+
+                MDSlider: # слайдер перемотки
+                    id: seek_slider
+                    hint: False
+
+                MDLabel: # время всей аудиозаписи
+                    id: totalduration
+                    text: "0:00:00"
+                    adaptive_height: True
+                    bold: True
+                    halign: "center"
+                    size_hint: .1, 1
             MDBoxLayout: # Вторая строчка кнопок
                 size_hint: 1, .5
                 padding: 4
@@ -134,26 +156,7 @@
                     adaptive_height: True
 
 
-            MDBoxLayout: # текущее время поспроизведения
-                size_hint: 1, .4
-                MDLabel:
-                    id: timenow
-                    text: "0:00:00"
-                    adaptive_height: True
-                    bold: True
-                    halign: "center"
-                    size_hint: .1, 1
 
-                MDSlider: # слайдер перемотки
-                    id: seek_slider
-                    hint: False
-
-                MDLabel: # время всей аудиозаписи
-                    text: "1:56:23"
-                    adaptive_height: True
-                    bold: True
-                    halign: "center"
-                    size_hint: .1, 1
 
         BoxLayout: # разбиение нижней области вертикально на 2 части
             orientation:'horizontal'

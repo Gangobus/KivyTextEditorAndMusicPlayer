@@ -3,6 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from tkinter import Tk, filedialog
 from kivy.core.audio import SoundLoader
 from mutagen.mp3 import MP3
+from kivy.clock import Clock
 
 class TopMusicBar(BoxLayout):
 
@@ -47,6 +48,14 @@ class TopMusicBar(BoxLayout):
                 self.ids.mfdur.text = musicfileduration
                 self.ids.mfsize.text = musicfilesize
                 self.ids.mfdiscr.text = musicfilediscr
+
+                totalmusicfileduration = duration
+                totalhours, totalremainder = divmod(totalmusicfileduration, 3600)
+                totalminutes, totalseconds = divmod(totalremainder, 60)
+                totalformatted_time = f"{int(totalhours):d}:{int(totalminutes):02d}:{int(totalseconds):02d}"
+
+                # update the playtime TextInput with the formatted time
+                self.ids.totalduration.text = totalformatted_time
     def play_music(self, *args):
         if self.current_sound:
             if self.last_played_pos:
@@ -58,11 +67,36 @@ class TopMusicBar(BoxLayout):
                 # начинаем проигрывание с начала
                 self.current_sound.play()
 
+        if self.current_sound:
+            if self.last_played_pos:
+                # восстанавливаем проигрывание с сохраненной позиции
+                self.current_sound.play()
+                self.current_sound.seek(self.last_played_pos)
+                self.last_played_pos = None
+            else:
+                # начинаем проигрывание с начала
+                self.current_sound.play()
+
+            # schedule a function to update the playtime TextInput every second
+            Clock.schedule_interval(self.update_playtime, 1)
+
+    def update_playtime(self, dt):
+        if self.current_sound and self.current_sound.state == 'play':
+            if self.current_sound and self.current_sound.state == 'play':
+                # get the current playback time in seconds
+                current_time = self.current_sound.get_pos() / 1
+
+                # format the time as H:MM:SS
+                hours, remainder = divmod(current_time, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                formatted_time = f"{int(hours):d}:{int(minutes):02d}:{int(seconds):02d}"
+
+                # update the playtime TextInput with the formatted time
+                self.ids.musictimenow.text = formatted_time
+
     def stop_music(self, *args):
         # останавливаем проигрывание звука (если он есть)
         if self.current_sound:
-            self.last_played_pos = self.current_sound.get_pos()
-            # Clock.unschedule(self.update_playback_time)
             self.last_played_pos = self.current_sound.get_pos()
             self.current_sound.stop()
 
