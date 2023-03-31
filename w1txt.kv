@@ -26,6 +26,7 @@
                     icon: "chevron-left"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
+                    on_release: root.rewindminus()
                 MDIconButton:
                     icon: "play-circle-outline"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -40,7 +41,7 @@
                     icon: "chevron-right"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
-                    on_release:
+                    on_release: root.rewindplus()
                 MDIconButton:
                     icon:"volume-mute"
                     pos_hint:{"center_x": .5, "center_y": .5}

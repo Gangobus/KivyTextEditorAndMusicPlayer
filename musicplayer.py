@@ -101,3 +101,26 @@ class TopMusicBar(BoxLayout):
             self.last_played_pos = self.current_sound.get_pos()
             self.current_sound.stop()
 
+    def rewindplus(self):
+        # Проверяем, есть ли звуковой файл и проигрывается ли он
+        if self.current_sound and self.current_sound.state == 'play':
+            # Получаем текущую позицию воспроизведения и добавляем 10 секунд
+            pos = self.current_sound.get_pos() + 10
+            # Ограничиваем позицию, чтобы не выходила за границы длительности звукового файла
+            pos = min(pos, self.current_sound.length)
+            # Устанавливаем новую позицию воспроизведения
+            self.current_sound.seek(pos)
+        else:
+            self.last_played_pos = self.last_played_pos + 10
+
+    def rewindminus(self):
+        # Проверяем, есть ли звуковой файл и проигрывается ли он
+        if self.current_sound and self.current_sound.state == 'play':
+            # Получаем текущую позицию воспроизведения и вычитаем 10 секунд
+            pos = self.current_sound.get_pos() - 10
+            # Ограничиваем позицию, чтобы не выходила за границы звукового файла
+            pos = max(pos, 0)
+            # Устанавливаем новую позицию воспроизведения
+            self.current_sound.seek(pos)
+        else:
+            self.last_played_pos = self.last_played_pos - 10
