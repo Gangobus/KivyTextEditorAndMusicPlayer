@@ -1,10 +1,4 @@
-import os
-from kivy.clock import Clock
-from tkinter import Tk, filedialog
-from docx import Document
-from kivymd.uix.button import MDIconButton
-from kivy.uix.textinput import TextInput
-from kivy.properties import BooleanProperty
+
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window

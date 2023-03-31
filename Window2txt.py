@@ -1,7 +1,5 @@
 
 from kivy.uix.screenmanager import Screen
-from tkinter import Tk, filedialog
-from docx import Document
 from musicplayer import TopMusicBar
 from TxtFunc import TxtFunctions
 

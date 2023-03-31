@@ -4,6 +4,7 @@ from tkinter import Tk, filedialog
 from kivy.core.audio import SoundLoader
 from mutagen.mp3 import MP3
 from kivy.clock import Clock
+from kivy.uix.videoplayer import VideoPlayer
 
 
 class TopMusicBar(BoxLayout):
@@ -18,6 +19,24 @@ class TopMusicBar(BoxLayout):
         self.paused = False
         self.played_until_end = False
 
+    def play_video(self):
+        # вызов диалогового окна для выбора файла
+        root = Tk()
+        root.withdraw()
+        file_path = filedialog.askopenfilename(
+            filetypes=[('Video Files', '*.mp4'), ('All Files', '*.*')]
+        )
+
+        # создание виджета VideoPlayer и воспроизведение выбранного видео
+        video_player = VideoPlayer(source=file_path)
+        self.ids.vpl.add_widget(video_player)
+        video_player.state = 'play'
+
+    def on_pause(self):
+        self.video_player.state = 'pause'
+
+    def on_stop(self):
+        self.video_player.state = 'stop'
     def open_music_file_dialog(self, *args):
         root = Tk()
         root.withdraw()

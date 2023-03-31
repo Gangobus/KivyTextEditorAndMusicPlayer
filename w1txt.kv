@@ -1,4 +1,4 @@
-#:import get_color_from_hex kivy.utils.get_color_from_hex
+
 <Window1txt>:
     BoxLayout:
         orientation: 'vertical'
@@ -17,6 +17,7 @@
                     icon: "file-video"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
+                    on_release: root.play_video()
                 MDIconButton:
                     icon: "export"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -194,13 +195,17 @@
                         on_release:
                             root.manager.current = 'S2T'
 
+                BoxLayout:
+                    TextInput:
+                        text: "text editor area 1!"
+                        auto_indent: "False"
+                        base_direction: "ltr"
+                        id: txt1
+                        font_name: "TimesNewRoman"
+            BoxLayout:
+                id: vpl
 
-                TextInput:
-                    text: "text editor area 1!"
-                    auto_indent: "False"
-                    base_direction: "ltr"
-                    id: txt1
-                    font_name: "TimesNewRoman"
+
 
         BoxLayout:
             size_hint: 1, .02
