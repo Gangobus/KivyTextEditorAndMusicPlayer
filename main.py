@@ -19,7 +19,7 @@ class MainApp(MDApp):
                            fn_regular='times-new-roman.ttf')
         self.compare_mode = False
         self.highlight_color = (255, 0, 0, 1)  # set highlight color
-
+        Builder.load_file("musicplayer.kv")
         Builder.load_file("w2txt.kv")
         Builder.load_file("w1txt.kv")
 
