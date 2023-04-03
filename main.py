@@ -9,8 +9,8 @@ from Window2txt import Window2txt
 class MainApp(MDApp):
     def build(self):
         Window.size = [1600, 800]
-        LabelBase.register(name='TimesNewRoman',
-                           fn_regular='times-new-roman.ttf')
+        # LabelBase.register(name='TimesNewRoman',
+        #                    fn_regular='times-new-roman.ttf')
         self.compare_mode = False
         self.highlight_color = (255, 0, 0, 1)  # set highlight color
         Builder.load_file("musicplayer.kv")

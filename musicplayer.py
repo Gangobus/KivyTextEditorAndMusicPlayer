@@ -19,6 +19,7 @@ class TopMusicBar(BoxLayout):
         self.paused = False
         self.played_until_end = False
 
+
     def play_video(self):
         # вызов диалогового окна для выбора файла
         root = Tk()
@@ -29,7 +30,7 @@ class TopMusicBar(BoxLayout):
 
         # создание виджета VideoPlayer и воспроизведение выбранного видео
         video_player = VideoPlayer(source=file_path)
-        self.ids.vpl.add_widget(video_player)
+        self.ids.bta.add_widget(video_player)
         video_player.state = 'play'
 
     def on_pause(self):
