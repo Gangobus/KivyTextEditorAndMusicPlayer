@@ -6,7 +6,6 @@ from kivy.core.audio import SoundLoader
 from mutagen.mp3 import MP3
 from kivy.clock import Clock
 from kivy.uix.videoplayer import VideoPlayer
-
 class TopMusicBar(BoxLayout):
 
     def __init__(self, **kwargs):
@@ -33,61 +32,57 @@ class TopMusicBar(BoxLayout):
         )
         if file_path:
             # загружаем выбранный файл в объект Sound
-            sound = SoundLoader.load(file_path)
-            if sound:
+            sound = SoundLoader.load(file_path)#
+            if sound:#
                 # Получаем информацию о звуке
-                self.current_sound = sound
-                self.file_path = file_path
-                audio = MP3(file_path)
+                self.current_sound = sound#
+                self.file_path = file_path#
+                audio = MP3(file_path)#
 
-                duration = audio.info.length
-                file_size = os.path.getsize(file_path)
-                sample_rate = audio.info.sample_rate
+                duration = audio.info.length#
+                file_size = os.path.getsize(file_path)#
+                sample_rate = audio.info.sample_rate#
 
-                musicfilename = f"{os.path.basename(file_path)}"
-                musicfileduration = f"{duration:.2f} сек"
-                musicfilesize = f"{file_size} байт"
-                musicfilediscr = f"{sample_rate} Гц"
 
-                self.ids.mfname.text = musicfilename
-                self.ids.mfdur.text = musicfileduration
-                self.ids.mfsize.text = musicfilesize
-                self.ids.mfdiscr.text = musicfilediscr
+                musicfilename = f"{os.path.basename(file_path)}"#
+                musicfileduration = f"{int(duration//3600):d}:{int(duration//60%60):02d}:{int(duration%60):02d}"#
+                musicfilesize = f"{file_size / (1024*1024):.2f} МБ"#
+                musicfilediscr = f"{sample_rate} Гц"#
 
-                totalmusicfileduration = duration
-                totalhours, totalremainder = divmod(totalmusicfileduration, 3600)
-                totalminutes, totalseconds = divmod(totalremainder, 60)
-                totalformatted_time = f"{int(totalhours):d}:{int(totalminutes):02d}:{int(totalseconds):02d}"
 
+                totalmusicfileduration = duration#
+                totalhours, totalremainder = divmod(totalmusicfileduration, 3600)#
+                totalminutes, totalseconds = divmod(totalremainder, 60)#
+                totalformatted_time = f"{int(totalhours):d}:{int(totalminutes):02d}:{int(totalseconds):02d}"#
+
+                bitrate = audio.info.bitrate / 1000  # kbps
+                sample_rate = int(bitrate * 1000)  # Hz
+                musicfilefrequency = f"{sample_rate} Гц"
+                self.ids.mffreq.text = musicfilefrequency
                 # update the playtime TextInput with the formatted time
                 self.ids.totalduration.text = totalformatted_time
+
+                self.ids.mfname.text = musicfilename#
+                self.ids.mfdur.text = musicfileduration#
+                self.ids.mfsize.text = musicfilesize#
+                self.ids.mfdiscr.text = musicfilediscr#
+                self.ids.mffreq.text = musicfilefrequency#
+
+
+
     def play_music(self, *args):
-        if self.current_sound:
-            if self.last_played_pos:
+        if self.current_sound:#
+            if self.last_played_pos:#
                 # восстанавливаем проигрывание с сохраненной позиции
-                self.current_sound.play()
-                self.current_sound.seek(self.last_played_pos)
-                self.last_played_pos = None
+                self.current_sound.play()#
+                self.current_sound.seek(self.last_played_pos)#
+                self.last_played_pos = None#
+                Clock.schedule_interval(self.update_playtime, 1)
             else:
                 # начинаем проигрывание с начала
-                self.current_sound.play()
-            # Clock.schedule_interval(self.update_slider_position, 1)
+                self.current_sound.play()#
+                Clock.schedule_interval(self.update_playtime, 1)
 
-        if self.current_sound:
-            if self.last_played_pos:
-                # восстанавливаем проигрывание с сохраненной позиции
-                self.current_sound.play()
-                self.current_sound.seek(self.last_played_pos)
-                self.last_played_pos = None
-            else:
-                # начинаем проигрывание с начала
-                self.current_sound.play()
-
-            # schedule a function to update the playtime TextInput every second
-            Clock.schedule_interval(self.update_playtime, 1)
-
-    # def update_slider_position(self, dt):
-    #     if self.current_sound and self.current_sound.state == 'play':
 
 
     def update_playtime(self, dt):
@@ -107,6 +102,7 @@ class TopMusicBar(BoxLayout):
                 pos = self.current_sound.get_pos() / self.current_sound.length
                 # set the value of the slider to the current position
                 self.ids.seek_slider.value = pos
+                print(pos, "update_playtime")
     def on_seek_slider_value(self, instance, value):
         # Проверяем, есть ли звуковой файл и проигрывается ли он
         if self.current_sound and self.current_sound.state == 'play':
@@ -114,6 +110,7 @@ class TopMusicBar(BoxLayout):
             pos = self.current_sound.length * value
             # Устанавливаем новую позицию воспроизведения
             self.current_sound.seek(pos)
+            print(pos, "on_seek_slider_value")
     def stop_music(self, *args):
         # останавливаем проигрывание звука (если он есть)
         if self.current_sound:
