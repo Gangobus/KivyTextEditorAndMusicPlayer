@@ -1,6 +1,7 @@
 from tkinter import Tk, filedialog
 from docx import Document
 from kivy.uix.boxlayout import BoxLayout
+from kivymd.uix.button import MDIconButton
 class SecondText(BoxLayout):
     def open_22_file_dialog(self, *args):
         root = Tk()
@@ -27,42 +28,10 @@ class SecondText(BoxLayout):
                     document.add_paragraph(self.ids.txt22.text)
                     document.save(file_path)
 
-    def find_differences(self):
-        text1 = self.ids.txt1.text
-        text2 = self.ids.txt22.text
-
-        # Split the texts into lists of words
-        words1 = text1.split()
-        words2 = text2.split()
-
-        # Find the differences between the two lists
-        diff = list(set(words2) - set(words1))
-
-        # Highlight the differences in the second text
-        for word in diff:
-            start_pos = text2.find(word)
-            end_pos = start_pos + len(word)
-            if start_pos != -1:
-                text2 = text2[:start_pos] + f"[!--->]{word}[<---!]" + text2[end_pos:]
-
-        self.ids.txt22.text = text2
-
-    def remove_differences(self):
-        text2 = self.ids.txt22.text
-        new_text2 = text2.replace('[!--->]', '')
-        new_text2 = new_text2.replace('[<---!]', '')
-        self.ids.txt22.text = new_text2
-
-    def increase_font_size2(self):  # метод для увеличения размера шрифта
-        self.ids.txt1.font_size += 2
-        self.ids.txt22.font_size += 2
-
-        # метод для уменьшения размера шрифта
-
-    def decrease_font_size2(self):
-        self.ids.txt1.font_size -= 2
-        self.ids.txt22.font_size -= 2
-
+class Finddiff(MDIconButton):
+    pass
+class Removediff(MDIconButton):
+    pass
 class TxtFunctions():
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -71,8 +40,12 @@ class TxtFunctions():
         secondtext = SecondText()
         if self.secondtext in self.ids.bta.children:
             self.ids.bta.remove_widget(self.secondtext)
+            # self.ids.textbuttonsarea.remove_widget(self.widgfinddiff)
+            # self.ids.textbuttonsarea.remove_widget(self.widgremdeif)
         else:
             self.ids.bta.add_widget(self.secondtext)
+            # self.ids.textbuttonsarea.add_widget(self.widgfinddiff)
+            # self.ids.textbuttonsarea.add_widget(self.widgremdeif)
     def open_txt_file_dialog(self, *args):
         root = Tk()
         root.withdraw()
@@ -100,6 +73,7 @@ class TxtFunctions():
     # метод для увеличения размера шрифта
     def increase_font_size1(self):
         self.ids.txt1.font_size += 2
+
 
     # метод для уменьшения размера шрифта
     def decrease_font_size1(self):

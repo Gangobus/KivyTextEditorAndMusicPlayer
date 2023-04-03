@@ -6,16 +6,16 @@
             orientation: 'vertical'
             size_hint: 1, .25
             BoxLayout: # панель кнопок 1-ая сточка
+                id: topbuttons
                 size_hint: 1, .5
 
                 MDIconButton:
                     icon: "file-music"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     on_release: root.open_music_file_dialog(self)
-
                 MDIconButton:
                     icon: "file-video"
-                    pos_hint:{"center_x": .5, "center_y": .5}
+                    pos_hint:{ "center_y": .5}
                     adaptive_height: True
                     on_release: root.play_video()
                 MDIconButton:
@@ -97,9 +97,11 @@
                     halign: "center"
                     size_hint: .1, 1
 
-                MDSlider: # слайдер перемотки
+                MDSlider:
                     id: seek_slider
-                    hint: False
+                    min: 0
+                    max: 1
+                    on_value: root.on_seek_slider_value(self, self.value)
 
                 MDLabel: # время всей аудиозаписи
                     id: totalduration
@@ -168,6 +170,7 @@
                 BoxLayout:
                     orientation:'horizontal'
                     size_hint: 1, .1
+                    id: textbuttonsarea
                     MDIconButton:
                         icon: "folder-open-outline"
                         pos_hint:{"center_x": .5, "center_y": .5}
@@ -268,6 +271,16 @@
             icon: "content-save-outline"
             pos_hint:{"center_x": .5, "center_y": .5}
             on_release: root.save_22_text_to_file()
+        MDIconButton:
+            icon:"format-font-size-decrease"
+            pos_hint:{"center_x": .5, "center_y": .5}
+            adaptive_height: True
+            on_release: root.decrease_font_size2()
+        MDIconButton:
+            icon:"format-font-size-increase"
+            pos_hint:{"center_x": .5, "center_y": .5}
+            adaptive_height: True
+            on_release: root.increase_font_size2()
 
         Label:
         MDIconButton:
@@ -287,3 +300,21 @@
         text: "text editor area 2!"
         base_direction: "ltr"
         id: txt22
+
+<VideoDisabel@MDIconButton>:
+    icon: "video-box-off"
+    pos_hint:{"center_x": .5, "center_y": .5}
+    adaptive_height: True
+    on_release: root.offvideo()
+
+<Finddiff@MDIconButton>:
+    icon:"vector-intersection"
+    pos_hint:{"center_x": .5, "center_y": .5}
+    adaptive_height: True
+    on_release: root.find_differences()
+
+<Removediff@MDIconButton>:
+    icon:"vector-combine"
+    pos_hint:{"center_x": .5, "center_y": .5}
+    adaptive_height: True
+    on_release: root.remove_differences()
