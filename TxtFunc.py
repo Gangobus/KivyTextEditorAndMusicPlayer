@@ -21,13 +21,18 @@ class SecondText(BoxLayout):
         if file_path:
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(self.ids.txt22.text)
-
                 # Если файл имеет расширение .docx, то сохраняем его в формате docx
                 if file_path.endswith(".docx"):
                     document = Document()
                     document.add_paragraph(self.ids.txt22.text)
                     document.save(file_path)
+    def increase_font_size2(self):
+        self.ids.txt22.font_size += 2
 
+
+    # метод для уменьшения размера шрифта
+    def decrease_font_size2(self):
+        self.ids.txt22.font_size -= 2
 class Finddiff(MDIconButton):
     pass
 class Removediff(MDIconButton):

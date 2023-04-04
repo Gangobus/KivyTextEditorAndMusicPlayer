@@ -1,4 +1,4 @@
-<Window1txt@BoxLayout>:
+<Window1txt>:
     BoxLayout:
         orientation: 'vertical'
         md_bg_color: get_color_from_hex("#010101")
@@ -12,7 +12,7 @@
                 MDIconButton:
                     icon: "file-music"
                     pos_hint:{"center_x": .5, "center_y": .5}
-                    on_release: root.open_music_file_dialog(self)
+                    on_release: root.open_music_file_dialog()
                 MDIconButton:
                     icon: "file-video"
                     pos_hint:{ "center_y": .5}

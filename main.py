@@ -1,9 +1,7 @@
-
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
-from kivy.core.text import LabelBase
-from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.screenmanager import ScreenManager
 from Window1txt import Window1txt
 class MainApp(MDApp):
     def build(self):
@@ -18,7 +16,5 @@ class MainApp(MDApp):
         sm=ScreenManager()
         sm.add_widget(Window1txt(name="S1T"))
         return sm
-    def fps_check(self):
-        self.fps_monitor_start()
 
 MainApp().run()
