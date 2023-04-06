@@ -19,6 +19,7 @@ class TopMusicBar(BoxLayout):
         self.video_player = None
         self.videobutton = None
         self.playtime_event = None
+        self.previous_volume = 1
 
     def open_music_file_dialog(self, *args):
         root = Tk()
@@ -73,19 +74,25 @@ class TopMusicBar(BoxLayout):
                 self.current_sound.stop()
                 self.current_sound.seek(0)
             # Schedule the sound to play after it has been buffered
-            Clock.schedule_once(self.play_buffered_sound, 0.001)
-
+            Clock.schedule_once(self.play_buffered_sound, 2)
 
     def play_buffered_sound(self, dt):
         # Play the sound after it has been buffered
         self.current_sound.play()
+        # Update the slider with the correct value
+        self.update_slider(dt)
         # Schedule the update_playtime function to run every second
         Clock.schedule_interval(self.update_playtime, 1)
-        Clock.schedule_interval(self.update_slider, 0.5)
+        Clock.schedule_interval(self.update_slider, 0.1)
+
     def update_slider(self, dt):
         if self.current_sound and self.current_sound.state == 'play':
-            self.ids.seek_slider.value = self.current_sound.get_pos() / self.current_sound.length
-            print((self.current_sound.get_pos()), (self.current_sound.get_pos() / self.current_sound.length))
+            # Store the current playback position
+            current_pos = self.current_sound.get_pos()
+            # Update the slider
+            self.ids.seek_slider.value = current_pos / self.current_sound.length
+            # Reset the playback position
+            # self.current_sound.seek(current_pos)
     def update_playtime(self, dt):
         if self.current_sound and self.current_sound.state == 'play':
 
@@ -101,10 +108,9 @@ class TopMusicBar(BoxLayout):
         # Проверяем, есть ли звуковой файл и проигрывается ли он
         if self.current_sound and self.current_sound.state == 'play':
             # Вычисляем новую позицию воспроизведения, исходя из значения слайдера
-            pos = self.current_sound.length * value
+            pos = value * self.current_sound.length
             # Устанавливаем новую позицию воспроизведения
             self.current_sound.seek(pos)
-            print(pos, "on_seek_slider_value")
     def stop_music(self, *args):
         # останавливаем проигрывание звука (если он есть)
         if self.current_sound:
@@ -134,6 +140,14 @@ class TopMusicBar(BoxLayout):
             self.current_sound.seek(pos)
         else:
             self.last_played_pos = self.last_played_pos - 10
+
+    def mute(self):
+        if self.current_sound:
+            self.current_sound.volume = 0
+
+    def unmute(self):
+        if self.current_sound:
+            self.current_sound.volume = self.previous_volume
 
     def play_video(self):
         # если видеоплеер уже создан, закрываем его

@@ -47,15 +47,20 @@
                     icon:"volume-mute"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
-                BoxLayout: # Регулировка громкости
-                    size_hint: .2 , 1
-                    MDSlider:
-                        hint: False
-                        adaptive_height: True
+                    on_release: root.mute()
+#                BoxLayout: # Регулировка громкости
+#                    size_hint: .5 , 1
+#                    MDSlider:
+#                        id: volume_slider
+#                        hint: False
+#                        adaptive_height: True
+#                        on_value: root.on_volume_slider_value(self, self.value)
                 MDIconButton:
                     icon: "volume-high"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
+                    on_release: root.unmute()
+
                 MDIconButton:
                     icon: "book-information-variant"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -101,7 +106,8 @@
                     id: seek_slider
                     min: 0
                     max: 1
-                    on_value: root.on_seek_slider_value(self, self.value)
+                    hint: False
+                    on_touch_move: root.on_seek_slider_value(self, self.value)
 
                 MDLabel: # время всей аудиозаписи
                     id: totalduration
