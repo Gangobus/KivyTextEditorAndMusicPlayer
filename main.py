@@ -3,11 +3,10 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
 from Window1txt import Window1txt
+
 class MainApp(MDApp):
     def build(self):
         Window.size = [1600, 800]
-        # LabelBase.register(name='TimesNewRoman',
-        #                    fn_regular='times-new-roman.ttf')
         self.compare_mode = False
         self.highlight_color = (255, 0, 0, 1)  # set highlight color
         Builder.load_file("musicplayer.kv")

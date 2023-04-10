@@ -18,10 +18,10 @@
                     pos_hint:{ "center_y": .5}
                     adaptive_height: True
                     on_release: root.play_video()
-                MDIconButton:
-                    icon: "export"
-                    pos_hint:{"center_x": .5, "center_y": .5}
-                    adaptive_height: True
+#                MDIconButton:
+#                    icon: "export"
+#                    pos_hint:{"center_x": .5, "center_y": .5}
+#                    adaptive_height: True
 
                 MDIconButton:
                     icon: "chevron-left"
@@ -61,37 +61,23 @@
                     adaptive_height: True
                     on_release: root.unmute()
 
+#                MDIconButton:
+#                    icon: "book-information-variant"
+#                    pos_hint:{"center_x": .5, "center_y": .5}
+#                    adaptive_height: True
+                Label:
+
                 MDIconButton:
-                    icon: "book-information-variant"
+                    icon: "microphone-message"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
-                Label:
-                BoxLayout: # ввод времени и кнопка активации распознавания
-                    padding: 1
-                    spacing: 3
-                    TextInput:
-
-                        size_hint: .1, .6
-                        multiline: False
-                        font_size: 14
-                        text: "0:00:00"
-                        pos_hint:{"center_x": .5, "center_y": .5}
-                    TextInput:
-                        size_hint: .1, .6
-                        multiline: False
-                        font_size: 14
-                        text: "0:00:00"
-                        pos_hint:{"center_x": .5, "center_y": .5}
-                    MDIconButton:
-                        icon: "microphone-message"
-                        pos_hint:{"center_x": .5, "center_y": .5}
-                        adaptive_height: True
-                    MDIconButton:
-                        icon:"bug-check-outline"
-                        pos_hint:{"center_x": .5, "center_y": .5}
-                        adaptive_height: True
-                        on_release:
-                            app.fps_check()
+                    on_release: root.spech_to_text()
+                MDIconButton:
+                    icon:"bug-check-outline"
+                    pos_hint:{"center_x": .5, "center_y": .5}
+                    adaptive_height: True
+                    on_release:
+                        app.fps_check()
             MDBoxLayout: # текущее время поспроизведения
                 size_hint: 1, .4
                 MDLabel:
@@ -203,7 +189,6 @@
                         pos_hint:{"center_x": .5, "center_y": .5}
                         adaptive_height: True
                         on_press:
-                            #root.manager.current = 'S2T'
                             root.txt2()
 
                 BoxLayout:
@@ -212,7 +197,6 @@
                         auto_indent: "False"
                         base_direction: "ltr"
                         id: txt1
-#                        font_name: "TimesNewRoman"
 
 
 
@@ -265,6 +249,39 @@
                 halign:"center"
                 text:
                 font_size: "11px"
+
+<VoiceText@BoxLayout>:
+    orientation: "vertical"
+    BoxLayout:
+        orientation:'horizontal'
+        size_hint: 1, .1
+        MDIconButton:
+            icon: "folder-open-outline"
+            pos_hint:{"center_x": .5, "center_y": .5}
+            adaptive_height: True
+            on_release: root.start_speech_recognition_process()
+#            on_release: root.open_33_file_dialog()
+
+        MDIconButton:
+            icon: "content-save-outline"
+            pos_hint:{"center_x": .5, "center_y": .5}
+            on_release: root.save_3_text_to_file()
+        MDIconButton:
+            icon:"format-font-size-decrease"
+            pos_hint:{"center_x": .5, "center_y": .5}
+            adaptive_height: True
+            on_release: root.decrease_font_size3()
+        MDIconButton:
+            icon:"format-font-size-increase"
+            pos_hint:{"center_x": .5, "center_y": .5}
+            adaptive_height: True
+            on_release: root.increase_font_size3()
+
+    TextInput:
+        text: "VOSK text input area!"
+        base_direction: "ltr"
+        id: txt3
+
 <SecondText@BoxLayout>:
     orientation: "vertical"
     BoxLayout:
@@ -289,19 +306,19 @@
             adaptive_height: True
             on_release: root.increase_font_size2()
 
-        Label:
-        MDIconButton:
-            icon:"vector-intersection"
-            pos_hint:{"center_x": .5, "center_y": .5}
-            adaptive_height: True
-            on_release: root.find_differences()
-            state: 'normal'
-        MDIconButton:
-            icon:"vector-combine"
-            pos_hint:{"center_x": .5, "center_y": .5}
-            adaptive_height: True
-            on_release: root.remove_differences()
-            state: 'normal'
+#        Label:
+#        MDIconButton:
+#            icon:"vector-intersection"
+#            pos_hint:{"center_x": .5, "center_y": .5}
+#            adaptive_height: True
+#            on_release: root.find_differences()
+#            state: 'normal'
+#        MDIconButton:
+#            icon:"vector-combine"
+#            pos_hint:{"center_x": .5, "center_y": .5}
+#            adaptive_height: True
+#            on_release: root.remove_differences()
+#            state: 'normal'
 
     TextInput:
         text: "text editor area 2!"
