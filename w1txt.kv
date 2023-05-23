@@ -1,4 +1,4 @@
-<Window1txt>:
+<WindowInterface>:
     BoxLayout:
         orientation: 'vertical'
         md_bg_color: get_color_from_hex("#010101")
@@ -12,7 +12,7 @@
                 MDIconButton:
                     icon: "file-music"
                     pos_hint:{"center_x": .5, "center_y": .5}
-                    on_release: root.open_music_file_dialog()
+                    on_release: root.on_open_music_file_dialog()
                 MDIconButton:
                     icon: "file-video"
                     pos_hint:{ "center_y": .5}
@@ -32,7 +32,7 @@
                     icon: "play-circle-outline"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
-                    on_release: root.play_music()
+                    on_release: root.playandpause()
                 MDIconButton:
                     icon: "pause-circle-outline"
                     adaptive_height: True
@@ -71,13 +71,8 @@
                     icon: "microphone-message"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
-                    on_release: root.spech_to_text()
-                MDIconButton:
-                    icon:"bug-check-outline"
-                    pos_hint:{"center_x": .5, "center_y": .5}
-                    adaptive_height: True
-                    on_release:
-                        app.fps_check()
+                    on_release: root.spech_recogn()
+                
             MDBoxLayout: # текущее время поспроизведения
                 size_hint: 1, .4
                 MDLabel:
@@ -102,54 +97,7 @@
                     bold: True
                     halign: "center"
                     size_hint: .1, 1
-            MDBoxLayout: # Вторая строчка кнопок
-                size_hint: 1, .5
-                padding: 4
-                spacing: 5
-                MDRectangleFlatButton:
-                    text:"[Время]"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<М1>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<М2>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<М3>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<М4>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<Ж1>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<Ж2>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<Ж3>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<Ж4>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<Неразбочивая речь>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
-                MDRectangleFlatButton:
-                    text:"<Неразбочивая речь на фоне>"
-                    pos_hint:{"center_x": 0.5, "center_y": 0.5}
-                    adaptive_height: True
+
 
 
 
@@ -250,7 +198,7 @@
                 text:
                 font_size: "11px"
 
-<VoiceText@BoxLayout>:
+<VoiceToTextWidget@BoxLayout>:
     orientation: "vertical"
     BoxLayout:
         orientation:'horizontal'
@@ -259,8 +207,7 @@
             icon: "folder-open-outline"
             pos_hint:{"center_x": .5, "center_y": .5}
             adaptive_height: True
-            on_release: root.start_speech_recognition_process()
-#            on_release: root.open_33_file_dialog()
+            on_release: root.run_spech_recogn()
 
         MDIconButton:
             icon: "content-save-outline"
@@ -278,7 +225,7 @@
             on_release: root.increase_font_size3()
 
     TextInput:
-        text: "VOSK text input area!"
+        text: "VOSK area!"
         base_direction: "ltr"
         id: txt3
 

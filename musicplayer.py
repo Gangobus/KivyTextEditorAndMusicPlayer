@@ -1,46 +1,55 @@
 from kivy.uix.videoplayer import VideoPlayer
+from kivy.core.video import Video
+from kivy.core.video import video_ffmpeg
+from kivy.core.video import video_ffpyplayer
+from kivy.core.video import video_null
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.audio import SoundLoader
 from tkinter import Tk, filedialog
 from mutagen.mp3 import MP3
 import os
+from kivy.core.audio import SoundLoader
+import keyboard
+from pydub import AudioSegment
+from pydub.playback import play
+
 
 class TopMusicBar(BoxLayout):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.file_path = None
-        self.last_played_pos = None
-        self.current_sound = None
-        self.playing = False
-        self.paused = False
-        self.played_until_end = False
-        self.video_player = None
-        self.videobutton = None
-        self.playtime_event = None
-        self.previous_volume = 1
+
+
+
+    def on_open_music_file_dialog(self, *args):
+        Clock.schedule_once(self.open_music_file_dialog)
 
     def open_music_file_dialog(self, *args):
         root = Tk()
         root.withdraw()
 
-        file_path = filedialog.askopenfilename(
-            title="Выберите MP3-файл",
-            filetypes=(("MP3 files", "*.mp3"),)
+        file_path_music = filedialog.askopenfilename(
+            title="Select audio file",
+            filetypes=(
+                ("MP3 files", "*.mp3"),
+                ("WAV files", "*.wav"),
+                ("OGG files", "*.ogg"),  # Add support for OGG files
+                ("FLAC files", "*.flac"),  # Add support for FLAC files
+                ("All files", "*.*")
+            )
         )
-        if file_path:
-            sound = SoundLoader.load(file_path)
+
+        if file_path_music:
+            sound = SoundLoader.load(file_path_music)
             if sound:
                 self.current_sound = sound
-                self.file_path = file_path
-                audio = MP3(file_path)
+                self.file_path = file_path_music
+                audio = MP3(file_path_music)
 
                 duration = audio.info.length
-                file_size = os.path.getsize(file_path)
+                file_size = os.path.getsize(file_path_music)
                 sample_rate = audio.info.sample_rate
 
-                musicfilename = f"{os.path.basename(file_path)}"  #
+                musicfilename = f"{os.path.basename(file_path_music)}"  #
                 musicfileduration = f"{int(duration // 3600):d}:{int(duration // 60 % 60):02d}:{int(duration % 60):02d}"  #
                 musicfilesize = f"{file_size / (1024 * 1024):.2f} МБ"  #
                 musicfilediscr = f"{sample_rate} Гц"  #
@@ -58,8 +67,17 @@ class TopMusicBar(BoxLayout):
                 self.ids.totalduration.text = musicfileduration
 
                 # Buffer the sound file
-                self.current_sound = SoundLoader.load(file_path)
+                self.current_sound = SoundLoader.load(file_path_music)
                 self.current_sound.seek(0)
+    def playandpause(self):
+        if self.play_pause_status == False:
+            self.play_pause_status = True
+            self.play_music()
+        else:
+            self.play_pause_status = False
+            self.stop_music()
+
+
 
     def play_music(self, *args):
         if self.current_sound:
@@ -68,11 +86,11 @@ class TopMusicBar(BoxLayout):
                 self.current_sound.play()
                 self.current_sound.seek(self.last_played_pos)
                 self.last_played_pos = None
-            # Начинаем проигрывание с начала, если сохраненной позиции нет
             else:
                 self.current_sound.play()
                 self.current_sound.stop()
                 self.current_sound.seek(0)
+
             # Schedule the sound to play after it has been buffered
             Clock.schedule_once(self.play_buffered_sound, 2)
 
@@ -85,6 +103,7 @@ class TopMusicBar(BoxLayout):
         Clock.schedule_interval(self.update_playtime, 1)
         Clock.schedule_interval(self.update_slider, 0.1)
 
+
     def update_slider(self, dt):
         if self.current_sound and self.current_sound.state == 'play':
             # Store the current playback position
@@ -93,9 +112,9 @@ class TopMusicBar(BoxLayout):
             self.ids.seek_slider.value = current_pos / self.current_sound.length
             # Reset the playback position
             # self.current_sound.seek(current_pos)
+
     def update_playtime(self, dt):
         if self.current_sound and self.current_sound.state == 'play':
-
             # format the time as H:MM:SS
             hours, remainder = divmod(self.current_sound.get_pos(), 3600)
             minutes, seconds = divmod(remainder, 60)
@@ -103,6 +122,7 @@ class TopMusicBar(BoxLayout):
 
             # update the playtime TextInput with the formatted time
             self.ids.musictimenow.text = formatted_time
+            print('playing music')
 
     def on_seek_slider_value(self, instance, value):
         # Проверяем, есть ли звуковой файл и проигрывается ли он
@@ -111,6 +131,7 @@ class TopMusicBar(BoxLayout):
             pos = value * self.current_sound.length
             # Устанавливаем новую позицию воспроизведения
             self.current_sound.seek(pos)
+
     def stop_music(self, *args):
         # останавливаем проигрывание звука (если он есть)
         if self.current_sound:
@@ -170,8 +191,27 @@ class TopMusicBar(BoxLayout):
     def stop_video(self):
         self.ids.bta.remove_widget(self.video_player)
         self.video_player = None
+
     def on_pause(self):
         self.video_player.state = 'pause'
 
     def on_stop(self):
         self.video_player.state = 'stop'
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.file_path = None
+        self.last_played_pos = None
+        self.current_sound = None
+        self.playing = False
+        self.paused = False
+        self.played_until_end = False
+        self.video_player = None
+        self.videobutton = None
+        self.playtime_event = None
+        self.previous_volume = 1
+        self.play_pause_status = False
+
+        keyboard.add_hotkey("Ctrl + Space", self.playandpause)
+        keyboard.add_hotkey("Ctrl + Right", self.rewindplus)
+        keyboard.add_hotkey("Ctrl + Left", self.rewindminus)
