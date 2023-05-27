@@ -131,6 +131,11 @@
                         pos_hint:{"center_x": .5, "center_y": .5}
                         adaptive_height: True
                         on_release: root.increase_font_size1()
+                    MDIconButton:
+                        icon:"cogs"
+                        pos_hint:{"center_x": .5, "center_y": .5}
+                        adaptive_height: True
+                        on_release: root.open_settings_popup()
                     Label:
                     MDIconButton:
                         icon: "dock-window"
@@ -198,36 +203,70 @@
                 text:
                 font_size: "11px"
 
-<VoiceToTextWidget@BoxLayout>:
-    orientation: "vertical"
+#<VoiceToTextWidget@BoxLayout>:
+#    orientation: "vertical"
+#    BoxLayout:
+#        orientation:'horizontal'
+#        size_hint: 1, .1
+#        MDIconButton:
+#            icon: "folder-open-outline"
+#            pos_hint:{"center_x": .5, "center_y": .5}
+#            adaptive_height: True
+#            on_release: root.run_spech_recogn()
+#
+#        MDIconButton:
+#            icon: "content-save-outline"
+#            pos_hint:{"center_x": .5, "center_y": .5}
+#            on_release: root.save_3_text_to_file()
+#        MDIconButton:
+#            icon:"format-font-size-decrease"
+#            pos_hint:{"center_x": .5, "center_y": .5}
+#            adaptive_height: True
+#            on_release: root.decrease_font_size3()
+#        MDIconButton:
+#            icon:"format-font-size-increase"
+#            pos_hint:{"center_x": .5, "center_y": .5}
+#            adaptive_height: True
+#            on_release: root.increase_font_size3()
+#
+#    TextInput:
+#        text: "VOSK area!"
+#        base_direction: "ltr"
+#        id: txt3
+<SettingsPopup>:
+    title: 'Shortcut Settings'
+    size_hint: None, None
+    size: 900, 450  # Увеличьте размер окна
+
     BoxLayout:
-        orientation:'horizontal'
-        size_hint: 1, .1
-        MDIconButton:
-            icon: "folder-open-outline"
-            pos_hint:{"center_x": .5, "center_y": .5}
-            adaptive_height: True
-            on_release: root.run_spech_recogn()
+        orientation: 'vertical'
+        spacing: '5dp'
 
-        MDIconButton:
-            icon: "content-save-outline"
-            pos_hint:{"center_x": .5, "center_y": .5}
-            on_release: root.save_3_text_to_file()
-        MDIconButton:
-            icon:"format-font-size-decrease"
-            pos_hint:{"center_x": .5, "center_y": .5}
-            adaptive_height: True
-            on_release: root.decrease_font_size3()
-        MDIconButton:
-            icon:"format-font-size-increase"
-            pos_hint:{"center_x": .5, "center_y": .5}
-            adaptive_height: True
-            on_release: root.increase_font_size3()
+        GridLayout:
+            cols: 2
+            spacing: '5dp'
 
-    TextInput:
-        text: "VOSK area!"
-        base_direction: "ltr"
-        id: txt3
+            Label:
+                text: '<M1>'
+            TextInput:
+                text: root.shortcut_labels['<M1>']
+                hint_text: '<M1>'
+
+            Label:
+                text: '<M2>'
+            TextInput:
+                text: root.shortcut_labels['<M2>']
+                hint_text: '<M2>'
+
+            Label:
+                text: '<M3>'
+            TextInput:
+                text: root.shortcut_labels['<M3>']
+                hint_text: '<M3>'
+
+        Button:
+            text: 'Save'
+            on_release: root.save_settings()
 
 <SecondText@BoxLayout>:
     orientation: "vertical"

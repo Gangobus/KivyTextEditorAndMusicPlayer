@@ -1,25 +1,14 @@
 from kivy.uix.videoplayer import VideoPlayer
-from kivy.core.video import Video
-from kivy.core.video import video_ffmpeg
-from kivy.core.video import video_ffpyplayer
-from kivy.core.video import video_null
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
-from kivy.core.audio import SoundLoader
 from tkinter import Tk, filedialog
 from mutagen.mp3 import MP3
 import os
 from kivy.core.audio import SoundLoader
 import keyboard
-from pydub import AudioSegment
-from pydub.playback import play
 
 
 class TopMusicBar(BoxLayout):
-
-
-
-
     def on_open_music_file_dialog(self, *args):
         Clock.schedule_once(self.open_music_file_dialog)
 

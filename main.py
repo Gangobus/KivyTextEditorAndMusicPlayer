@@ -1,12 +1,10 @@
-#main.py
+# main.py
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager
 from Window import WindowInterface
-import multiprocessing
-from VoiceRecognition import VoiceToText
-from kivy.clock import Clock
+
 class MainApp(MDApp):
     def build(self):
         print('mainprocess1')
@@ -17,10 +15,6 @@ class MainApp(MDApp):
 
         sm = ScreenManager()
         sm.add_widget(WindowInterface(name="S1T"))
-
-        # if multiprocessing.current_process().name == 'build':
-        #     process = multiprocessing.Process(target=VoiceToText.run_spech_recogn)
-        #     process.start()
 
         return sm
 
