@@ -126,13 +126,14 @@ class TxtFunctions():
         Clock.schedule_once(create_settings_popup)
 
 class SettingsPopup(Popup):
+    shortcut_labels = TxtFunctions.shortcut_labels
+
     def update_shortcut_labels(self):
         for child in self.content.children[0].children:
             if isinstance(child, TextInput):
                 key = child.hint_text
                 value = child.text.strip()
-                TxtFunctions.shortcut_labels[key] = value
-
+                self.shortcut_labels[key] = value
     def save_settings(self):
         self.update_shortcut_labels()
         self.dismiss()
