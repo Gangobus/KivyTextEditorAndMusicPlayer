@@ -6,9 +6,11 @@ from mutagen.mp3 import MP3
 import os
 from kivy.core.audio import SoundLoader
 import keyboard
-
+import wave
+import soundfile as sf
 
 class TopMusicBar(BoxLayout):
+
     def on_open_music_file_dialog(self, *args):
         Clock.schedule_once(self.open_music_file_dialog)
 
@@ -21,9 +23,8 @@ class TopMusicBar(BoxLayout):
             filetypes=(
                 ("MP3 files", "*.mp3"),
                 ("WAV files", "*.wav"),
-                ("OGG files", "*.ogg"),  # Add support for OGG files
-                ("FLAC files", "*.flac"),  # Add support for FLAC files
-                ("All files", "*.*")
+                ("OGG files", "*.ogg"),
+                ("FLAC files", "*.flac")
             )
         )
 
@@ -32,20 +33,45 @@ class TopMusicBar(BoxLayout):
             if sound:
                 self.current_sound = sound
                 self.file_path = file_path_music
-                audio = MP3(file_path_music)
 
-                duration = audio.info.length
+                duration = 0
                 file_size = os.path.getsize(file_path_music)
-                sample_rate = audio.info.sample_rate
 
-                musicfilename = f"{os.path.basename(file_path_music)}"  #
-                musicfileduration = f"{int(duration // 3600):d}:{int(duration // 60 % 60):02d}:{int(duration % 60):02d}"  #
-                musicfilesize = f"{file_size / (1024 * 1024):.2f} МБ"  #
-                musicfilediscr = f"{sample_rate} Гц"  #
+                musicfilename = f"{os.path.basename(file_path_music)}"
+                musicfilesize = f"{file_size / (1024 * 1024):.2f} МБ"
+
+                if file_path_music.lower().endswith(".wav"):
+                    with wave.open(file_path_music, "rb") as wav_file:
+                        frames = wav_file.getnframes()
+                        sample_rate = wav_file.getframerate()
+                        duration = frames / float(sample_rate)
+
+                        channels = wav_file.getnchannels()
+                        bit_depth = wav_file.getsampwidth() * 8
+
+                        musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
+
+                elif file_path_music.lower().endswith(".mp3"):
+                    audio = MP3(file_path_music)
+                    duration = audio.info.length
+                    sample_rate = audio.info.sample_rate
+                    musicfilediscr = f"{sample_rate} Гц"
+
+                elif file_path_music.lower().endswith(".ogg"):
+                    audio, sample_rate = sf.read(file_path_music)
+                    duration = len(audio) / float(sample_rate)
+                    channels = audio.shape[1]
+                    bit_depth = audio.dtype.itemsize * 8
+                    musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
+
+                elif file_path_music.lower().endswith(".flac"):
+                    audio, sample_rate = sf.read(file_path_music)
+                    duration = len(audio) / float(sample_rate)
+                    channels = audio.shape[1]
+                    bit_depth = audio.dtype.itemsize * 8
+                    musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
+
                 musicfileduration = f"{int(duration // 3600):d}:{int(duration // 60 % 60):02d}:{int(duration % 60):02d}"
-
-                bitrate = audio.info.bitrate / 1000  # kbps
-                sample_rate = int(bitrate * 1000)  # Hz
                 musicfilefrequency = f"{sample_rate} Гц"
 
                 self.ids.mfname.text = musicfilename
@@ -55,16 +81,18 @@ class TopMusicBar(BoxLayout):
                 self.ids.mffreq.text = musicfilefrequency
                 self.ids.totalduration.text = musicfileduration
 
-                # Buffer the sound file
                 self.current_sound = SoundLoader.load(file_path_music)
                 self.current_sound.seek(0)
+
     def playandpause(self):
         if self.play_pause_status == False:
             self.play_pause_status = True
             self.play_music()
+            self.ids.play_pause_button.icon = "pause-circle-outline"
         else:
             self.play_pause_status = False
             self.stop_music()
+            self.ids.play_pause_button.icon = "play-circle-outline"
 
 
 
@@ -201,6 +229,7 @@ class TopMusicBar(BoxLayout):
         self.previous_volume = 1
         self.play_pause_status = False
 
-        keyboard.add_hotkey("Ctrl + Space", self.playandpause)
-        keyboard.add_hotkey("Ctrl + Right", self.rewindplus)
-        keyboard.add_hotkey("Ctrl + Left", self.rewindminus)
+        keyboard.add_hotkey("F1", self.playandpause)
+        keyboard.add_hotkey("F3", self.rewindplus)
+        keyboard.add_hotkey("F2", self.rewindminus)
+        keyboard.add_hotkey("F4", self.playandpause)

@@ -10,7 +10,7 @@ class MainApp(MDApp):
         print('mainprocess1')
         Window.size = [1600, 800]
         self.compare_mode = False
-        self.highlight_color = (255, 0, 0, 1)  # set highlight color
+        self.highlight_color = (255, 0, 0, 1)
         Builder.load_file("w1txt.kv")
 
         sm = ScreenManager()

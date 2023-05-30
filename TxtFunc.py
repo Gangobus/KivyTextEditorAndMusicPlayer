@@ -1,22 +1,16 @@
 #TxtFunc.py
 from docx import Document
-from kivy.uix.boxlayout import BoxLayout
 from tkinter import Tk, filedialog
 import keyboard
 import subprocess
 import os
 from kivy.clock import Clock
-
 from kivy.uix.popup import Popup
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
 from kivy.properties import DictProperty
-
-from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
-from kivy.app import App
+
+
+
 
 class TxtFunctions():
     def spech_recogn(self):
@@ -34,12 +28,8 @@ class TxtFunctions():
         secondtext = SecondText()
         if self.secondtext in self.ids.bta.children:
             self.ids.bta.remove_widget(self.secondtext)
-            # self.ids.textbuttonsarea.remove_widget(self.widgfinddiff)
-            # self.ids.textbuttonsarea.remove_widget(self.widgremdeif)
         else:
             self.ids.bta.add_widget(self.secondtext)
-            # self.ids.textbuttonsarea.add_widget(self.widgfinddiff)
-            # self.ids.textbuttonsarea.add_widget(self.widgremdeif)
 
     def open_txt_file_dialog(self, *args):
         root = Tk()
@@ -84,6 +74,63 @@ class TxtFunctions():
 
         Clock.schedule_once(insert_text)
 
+    def __init__(self, shortcut_labels=None, **kwargs):
+        super().__init__(**kwargs)
+        self.secondtext = SecondText()
+        if shortcut_labels is None:
+            shortcut_labels = {
+                'Ctrl+1': '<M1>',
+                'Ctrl+2': '<M2>',
+                'Ctrl+3': '<M3>',
+                'Ctrl+4': '<Ж1>',
+                'Ctrl+5': '<Ж2>',
+                'Ctrl+6': '<Ж3>',
+                'Ctrl+7': '<Неразборчивая речь>',
+                'Ctrl+8': '<Н>',
+                'Ctrl+9': '<О>',
+                'Ctrl+0': '<Текущее время воспроизведения>'
+            }
+        self.shortcut_labels = shortcut_labels
+        keyboard.add_hotkey("Ctrl+1", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+1'],))
+        keyboard.add_hotkey("Ctrl+2", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+2'],))
+        keyboard.add_hotkey("Ctrl+3", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+3'],))
+        keyboard.add_hotkey("Ctrl+4", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+4'],))
+        keyboard.add_hotkey("Ctrl+5", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+5'],))
+        keyboard.add_hotkey("Ctrl+6", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+6'],))
+        keyboard.add_hotkey("Ctrl+7", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+7'],))
+        keyboard.add_hotkey("Ctrl+8", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+8'],))
+        keyboard.add_hotkey("Ctrl+9", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+9'],))
+        keyboard.add_hotkey("Ctrl+0", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+0'],))
+
+
+    def insert_text_from_shortcut(self, text_to_insert):
+        self.update_shortcut_labels(self)  # Pass the 'self' instance as an argument
+        Clock.schedule_once(lambda dt: self.ids.txt1.insert_text(text_to_insert), 0)
+
+
+    def open_settings_popup(self):
+        popup = SettingsPopup(shortcut_labels=self.shortcut_labels)
+        popup.bind(on_dismiss=self.update_shortcut_labels)  # Bind the update_shortcut_labels method to on_dismiss event
+        popup.open()
+
+    def update_shortcut_labels(self, instance):
+        self.shortcut_labels = instance.shortcut_labels
+        keyboard.remove_all_hotkeys()  # Remove all existing hotkeys
+
+        # Add new hotkeys based on the updated shortcut_labels
+        keyboard.add_hotkey("Ctrl+1", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+1'],))
+        keyboard.add_hotkey("Ctrl+2", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+2'],))
+        keyboard.add_hotkey("Ctrl+3", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+3'],))
+        keyboard.add_hotkey("Ctrl+ 4", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+4'],))
+        keyboard.add_hotkey("Ctrl+5", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+5'],))
+        keyboard.add_hotkey("Ctrl+6", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+6'],))
+        keyboard.add_hotkey("Ctrl+7", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+7'],))
+        keyboard.add_hotkey("Ctrl+8", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+8'],))
+        keyboard.add_hotkey("Ctrl+9", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+9'],))
+        keyboard.add_hotkey("Ctrl+0", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+0'],))
+
+
+class SettingsPopup(Popup):
     shortcut_labels = DictProperty({
         'Ctrl+1': '<M1>',
         'Ctrl+2': '<M2>',
@@ -97,46 +144,9 @@ class TxtFunctions():
         'Ctrl+0': '<Текущее время воспроизведения>'
     })
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        keyboard.add_hotkey("Ctrl+1", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+1'],))
-        keyboard.add_hotkey("Ctrl+2", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+2'],))
-        keyboard.add_hotkey("Ctrl+3", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+3'],))
-        keyboard.add_hotkey("Ctrl+4", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+4'],))
-        keyboard.add_hotkey("Ctrl+5", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+5'],))
-        keyboard.add_hotkey("Ctrl+6", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+6'],))
-        keyboard.add_hotkey("Ctrl+7", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+7'],))
-        keyboard.add_hotkey("Ctrl+8", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+8'],))
-        keyboard.add_hotkey("Ctrl+9", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+9'],))
-        keyboard.add_hotkey("Ctrl+0", self.insert_text_from_shortcut, args=(self.shortcut_labels['Ctrl+0'],))
-
-    def insert_text_from_shortcut(self, text_to_insert):
-        self.update_shortcut_labels()
-        Clock.schedule_once(lambda dt: self.ids.txt1.insert_text(text_to_insert), 0)
-
-    def open_settings_popup(self):
-        popup = SettingsPopup(shortcut_labels=self.shortcut_labels)  # Передаем экземпляр shortcut_labels
-        popup.open()
-
-    def update_shortcut_labels(self):
-        def create_settings_popup(*args):
-            popup = SettingsPopup()
-            popup.update_shortcut_labels()
-
-        Clock.schedule_once(create_settings_popup)
-
-class SettingsPopup(Popup):
-    shortcut_labels = TxtFunctions.shortcut_labels
-
-    def update_shortcut_labels(self):
-        for child in self.content.children[0].children:
-            if isinstance(child, TextInput):
-                key = child.hint_text
-                value = child.text.strip()
-                self.shortcut_labels[key] = value
     def save_settings(self):
-        self.update_shortcut_labels()
         self.dismiss()
+        print(self.shortcut_labels)
 
 class SecondText(BoxLayout):
     def open_22_file_dialog(self, *args):
@@ -169,11 +179,3 @@ class SecondText(BoxLayout):
     # метод для уменьшения размера шрифта
     def decrease_font_size2(self):
         self.ids.txt22.font_size -= 2
-
-
-
-
-
-
-
-

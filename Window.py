@@ -1,4 +1,3 @@
-#Window.py
 from kivy.uix.screenmanager import Screen
 from musicplayer import TopMusicBar
 from TxtFunc import TxtFunctions
