@@ -10,11 +10,34 @@ import wave
 import soundfile as sf
 
 class TopMusicBar(BoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.formatted_time = "00:00:00"
+        self.file_path = None
+        self.last_played_pos = None
+        self.current_sound = None
+        self.playing = False
+        self.paused = False
+        self.played_until_end = False
+        self.video_player = None
+        self.videobutton = None
+        self.playtime_event = None
+        self.previous_volume = 1
+        self.play_pause_status = False
+
+        self.slider_event = None
+        self.playtime_event = None
+
+        keyboard.add_hotkey("F3", self.rewindplus)
+        keyboard.add_hotkey("F2", self.rewindminus)
+        keyboard.add_hotkey("F4", self.playandpause)
 
     def on_open_music_file_dialog(self, *args):
         Clock.schedule_once(self.open_music_file_dialog)
+        print("on_open_music_file_dialog")
 
     def open_music_file_dialog(self, *args):
+        print("open_music_file_dialog")
         root = Tk()
         root.withdraw()
 
@@ -85,20 +108,37 @@ class TopMusicBar(BoxLayout):
                 self.current_sound.seek(0)
 
     def playandpause(self):
+        print("playandpause")
         if self.play_pause_status == False:
             self.play_pause_status = True
             self.play_music()
-            self.ids.play_pause_button.icon = "pause-circle-outline"
         else:
             self.play_pause_status = False
             self.stop_music()
-            self.ids.play_pause_button.icon = "play-circle-outline"
 
+    def rebind_keyboardhotkeys(self, *args):
+        print("rebind_keyboardhotkeys")
+        keyboard.add_hotkey("F3", self.rewindplus)
+        keyboard.add_hotkey("F2", self.rewindminus)
+        keyboard.add_hotkey("F4", self.playandpause)
+        keyboard.add_hotkey("Esc", self.esc_press)
 
+    def esc_press(self):
+        print("esc_press")
+        self.stop_music()
+        if self.current_sound:
+            if self.current_sound and self.current_sound.state == 'play':
+                pos = self.current_sound.get_pos() - 3
+                pos = max(pos, 0)
+                self.current_sound.seek(pos)
+            else:
+                self.last_played_pos = self.last_played_pos - 3
+        else:
+            pass
 
     def play_music(self, *args):
+        print("play_music")
         if self.current_sound:
-            # Восстанавливаем проигрывание с сохраненной позиции, если она есть
             if self.last_played_pos:
                 self.current_sound.play()
                 self.current_sound.seek(self.last_played_pos)
@@ -108,128 +148,104 @@ class TopMusicBar(BoxLayout):
                 self.current_sound.stop()
                 self.current_sound.seek(0)
 
-            # Schedule the sound to play after it has been buffered
-            Clock.schedule_once(self.play_buffered_sound, 2)
+            Clock.schedule_once(self.play_buffered_sound, 0.5)
 
     def play_buffered_sound(self, dt):
-        # Play the sound after it has been buffered
+        print("play_buffered_sound")
         self.current_sound.play()
-        # Update the slider with the correct value
         self.update_slider(dt)
-        # Schedule the update_playtime function to run every second
-        Clock.schedule_interval(self.update_playtime, 1)
-        Clock.schedule_interval(self.update_slider, 0.1)
+        self.playtime_event = Clock.schedule_interval(self.update_playtime, 0.2)
+        self.slider_event = Clock.schedule_interval(self.update_slider, 0.1)
 
 
     def update_slider(self, dt):
+        print("update_slider")
         if self.current_sound and self.current_sound.state == 'play':
-            # Store the current playback position
             current_pos = self.current_sound.get_pos()
-            # Update the slider
             self.ids.seek_slider.value = current_pos / self.current_sound.length
-            # Reset the playback position
-            # self.current_sound.seek(current_pos)
 
     def update_playtime(self, dt):
+        print("update_playtime")
         if self.current_sound and self.current_sound.state == 'play':
-            # format the time as H:MM:SS
             hours, remainder = divmod(self.current_sound.get_pos(), 3600)
             minutes, seconds = divmod(remainder, 60)
-            formatted_time = f"{int(hours):d}:{int(minutes):02d}:{int(seconds):02d}"
+            self.formatted_time = f"{int(hours):d}:{int(minutes):02d}:{int(seconds):02d}"
+            self.ids.musictimenow.text = self.formatted_time
+            self.set_formatted_time(self.formatted_time)
 
-            # update the playtime TextInput with the formatted time
-            self.ids.musictimenow.text = formatted_time
-            print('playing music')
+    def get_formatted_time(self):
+        print("get_formatted_time")
+        return self.formatted_time
+
 
     def on_seek_slider_value(self, instance, value):
-        # Проверяем, есть ли звуковой файл и проигрывается ли он
+        print("on_seek_slider_value")
         if self.current_sound and self.current_sound.state == 'play':
-            # Вычисляем новую позицию воспроизведения, исходя из значения слайдера
             pos = value * self.current_sound.length
-            # Устанавливаем новую позицию воспроизведения
             self.current_sound.seek(pos)
 
     def stop_music(self, *args):
-        # останавливаем проигрывание звука (если он есть)
+        print("stop_music")
         if self.current_sound:
+            Clock.unschedule(self.playtime_event)
+            Clock.unschedule(self.slider_event)
             self.last_played_pos = self.current_sound.get_pos()
             self.current_sound.stop()
 
     def rewindplus(self):
-        # Проверяем, есть ли звуковой файл и проигрывается ли он
-        if self.current_sound and self.current_sound.state == 'play':
-            # Получаем текущую позицию воспроизведения и добавляем 10 секунд
-            pos = self.current_sound.get_pos() + 10
-            # Ограничиваем позицию, чтобы не выходила за границы длительности звукового файла
-            pos = min(pos, self.current_sound.length)
-            # Устанавливаем новую позицию воспроизведения
-            self.current_sound.seek(pos)
+        print("rewindplus")
+        if self.current_sound:
+            if self.current_sound and self.current_sound.state == 'play':
+                pos = self.current_sound.get_pos() + 10
+                self.current_sound.seek(pos)
+            else:
+                self.last_played_pos = self.last_played_pos + 10
         else:
-            self.last_played_pos = self.last_played_pos + 10
+            pass
 
     def rewindminus(self):
-        # Проверяем, есть ли звуковой файл и проигрывается ли он
-        if self.current_sound and self.current_sound.state == 'play':
-            # Получаем текущую позицию воспроизведения и вычитаем 10 секунд
-            pos = self.current_sound.get_pos() - 10
-            # Ограничиваем позицию, чтобы не выходила за границы звукового файла
-            pos = max(pos, 0)
-            # Устанавливаем новую позицию воспроизведения
-            self.current_sound.seek(pos)
+        print("rewindminus")
+        if self.current_sound:
+            if self.current_sound and self.current_sound.state == 'play':
+                pos = self.current_sound.get_pos() - 10
+                pos = max(pos, 0)
+                self.current_sound.seek(pos)
+            else:
+                self.last_played_pos = self.last_played_pos - 10
         else:
-            self.last_played_pos = self.last_played_pos - 10
-
+            pass
     def mute(self):
+        print("mute")
         if self.current_sound:
             self.current_sound.volume = 0
 
     def unmute(self):
+        print("unmute")
         if self.current_sound:
             self.current_sound.volume = self.previous_volume
 
     def play_video(self):
-        # если видеоплеер уже создан, закрываем его
         if self.video_player is not None:
             self.stop_video()
             return
 
-        # вызов диалогового окна для выбора файла
         root = Tk()
         root.withdraw()
         file_path = filedialog.askopenfilename(
             filetypes=[('Video Files', '*.mp4'), ('All Files', '*.*')]
         )
 
-        # создание виджета VideoPlayer и воспроизведение выбранного видео
         self.video_player = VideoPlayer(source=file_path)
         self.ids.bta.add_widget(self.video_player)
         self.video_player.state = 'play'
+        self.video_player.options = {'eos': 'stop'}
 
     def stop_video(self):
         self.ids.bta.remove_widget(self.video_player)
         self.video_player = None
-
     def on_pause(self):
         self.video_player.state = 'pause'
 
     def on_stop(self):
         self.video_player.state = 'stop'
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.file_path = None
-        self.last_played_pos = None
-        self.current_sound = None
-        self.playing = False
-        self.paused = False
-        self.played_until_end = False
-        self.video_player = None
-        self.videobutton = None
-        self.playtime_event = None
-        self.previous_volume = 1
-        self.play_pause_status = False
-
-        keyboard.add_hotkey("F1", self.playandpause)
-        keyboard.add_hotkey("F3", self.rewindplus)
-        keyboard.add_hotkey("F2", self.rewindminus)
-        keyboard.add_hotkey("F4", self.playandpause)
