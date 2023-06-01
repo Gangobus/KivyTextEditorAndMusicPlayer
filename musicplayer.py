@@ -8,6 +8,7 @@ from kivy.core.audio import SoundLoader
 import keyboard
 import wave
 import soundfile as sf
+from zipfile import BadZipFile
 
 class TopMusicBar(BoxLayout):
     def __init__(self, **kwargs):
@@ -37,75 +38,86 @@ class TopMusicBar(BoxLayout):
         print("on_open_music_file_dialog")
 
     def open_music_file_dialog(self, *args):
-        print("open_music_file_dialog")
-        root = Tk()
-        root.withdraw()
+        try:
+            print("open_music_file_dialog")
+            root = Tk()
+            root.withdraw()
 
-        file_path_music = filedialog.askopenfilename(
-            title="Select audio file",
-            filetypes=(
-                ("MP3 files", "*.mp3"),
-                ("WAV files", "*.wav"),
-                ("OGG files", "*.ogg"),
-                ("FLAC files", "*.flac")
+            file_path_music = filedialog.askopenfilename(
+                title="Select audio file",
+                filetypes=(
+                    ("MP3 files", "*.mp3"),
+                    ("WAV files", "*.wav"),
+                    ("OGG files", "*.ogg"),
+                    ("FLAC files", "*.flac")
+                )
             )
-        )
 
-        if file_path_music:
-            sound = SoundLoader.load(file_path_music)
-            if sound:
-                self.current_sound = sound
-                self.file_path = file_path_music
+            if file_path_music:
+                sound = SoundLoader.load(file_path_music)
+                if sound:
+                    self.current_sound = sound
+                    self.file_path = file_path_music
 
-                duration = 0
-                file_size = os.path.getsize(file_path_music)
+                    duration = 0
+                    file_size = os.path.getsize(file_path_music)
 
-                musicfilename = f"{os.path.basename(file_path_music)}"
-                musicfilesize = f"{file_size / (1024 * 1024):.2f} МБ"
+                    musicfilename = f"{os.path.basename(file_path_music)}"
+                    musicfilesize = f"{file_size / (1024 * 1024):.2f} МБ"
 
-                if file_path_music.lower().endswith(".wav"):
-                    with wave.open(file_path_music, "rb") as wav_file:
-                        frames = wav_file.getnframes()
-                        sample_rate = wav_file.getframerate()
-                        duration = frames / float(sample_rate)
+                    if file_path_music.lower().endswith(".wav"):
+                        with wave.open(file_path_music, "rb") as wav_file:
+                            frames = wav_file.getnframes()
+                            sample_rate = wav_file.getframerate()
+                            duration = frames / float(sample_rate)
 
-                        channels = wav_file.getnchannels()
-                        bit_depth = wav_file.getsampwidth() * 8
+                            channels = wav_file.getnchannels()
+                            bit_depth = wav_file.getsampwidth() * 8
 
+                            musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
+
+                    elif file_path_music.lower().endswith(".mp3"):
+                        audio = MP3(file_path_music)
+                        duration = audio.info.length
+                        sample_rate = audio.info.sample_rate
+                        musicfilediscr = f"{sample_rate} Гц"
+
+                    elif file_path_music.lower().endswith(".ogg"):
+                        audio, sample_rate = sf.read(file_path_music)
+                        duration = len(audio) / float(sample_rate)
+                        channels = audio.shape[1]
+                        bit_depth = audio.dtype.itemsize * 8
                         musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
 
-                elif file_path_music.lower().endswith(".mp3"):
-                    audio = MP3(file_path_music)
-                    duration = audio.info.length
-                    sample_rate = audio.info.sample_rate
-                    musicfilediscr = f"{sample_rate} Гц"
+                    elif file_path_music.lower().endswith(".flac"):
+                        audio, sample_rate = sf.read(file_path_music)
+                        duration = len(audio) / float(sample_rate)
+                        channels = audio.shape[1]
+                        bit_depth = audio.dtype.itemsize * 8
+                        musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
 
-                elif file_path_music.lower().endswith(".ogg"):
-                    audio, sample_rate = sf.read(file_path_music)
-                    duration = len(audio) / float(sample_rate)
-                    channels = audio.shape[1]
-                    bit_depth = audio.dtype.itemsize * 8
-                    musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
+                    musicfileduration = f"{int(duration // 3600):d}:{int(duration // 60 % 60):02d}:{int(duration % 60):02d}"
+                    musicfilefrequency = f"{sample_rate} Гц"
 
-                elif file_path_music.lower().endswith(".flac"):
-                    audio, sample_rate = sf.read(file_path_music)
-                    duration = len(audio) / float(sample_rate)
-                    channels = audio.shape[1]
-                    bit_depth = audio.dtype.itemsize * 8
-                    musicfilediscr = f"{sample_rate} Гц, {channels} каналов, {bit_depth}-бит"
+                    self.ids.mfname.text = musicfilename
+                    self.ids.mfdur.text = musicfileduration
+                    self.ids.mfsize.text = musicfilesize
+                    self.ids.mfdiscr.text = musicfilediscr
+                    self.ids.mffreq.text = musicfilefrequency
+                    self.ids.totalduration.text = musicfileduration
 
-                musicfileduration = f"{int(duration // 3600):d}:{int(duration // 60 % 60):02d}:{int(duration % 60):02d}"
-                musicfilefrequency = f"{sample_rate} Гц"
-
-                self.ids.mfname.text = musicfilename
-                self.ids.mfdur.text = musicfileduration
-                self.ids.mfsize.text = musicfilesize
-                self.ids.mfdiscr.text = musicfilediscr
-                self.ids.mffreq.text = musicfilefrequency
-                self.ids.totalduration.text = musicfileduration
-
-                self.current_sound = SoundLoader.load(file_path_music)
-                self.current_sound.seek(0)
+                    self.current_sound = SoundLoader.load(file_path_music)
+                    self.current_sound.seek(0)
+        except BadZipFile:
+            pass
+        except FileNotFoundError:
+            pass
+        except IOError:
+            pass
+        except PermissionError:
+            pass
+        except Exception as e:
+            pass
 
     def playandpause(self):
         print("playandpause")

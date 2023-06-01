@@ -8,6 +8,7 @@ from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy.properties import DictProperty
 from kivy.uix.boxlayout import BoxLayout
+from zipfile import BadZipFile
 
 
 class SettingsPopup(Popup):
@@ -125,14 +126,15 @@ class TxtFunctions():
             # Запускаем .exe файл в отдельном процессе
             subprocess.Popen(exe_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
 
-        def txt2(self):
-            secondtext = SecondText()
-            if self.secondtext in self.ids.bta.children:
-                self.ids.bta.remove_widget(self.secondtext)
-            else:
-                self.ids.bta.add_widget(self.secondtext)
+    def txt2(self):
+        secondtext = SecondText()
+        if self.secondtext in self.ids.bta.children:
+            self.ids.bta.remove_widget(self.secondtext)
+        else:
+            self.ids.bta.add_widget(self.secondtext)
 
-        def open_txt_file_dialog(self, *args):
+    def open_txt_file_dialog(self, *args):
+        try:
             root = Tk()
             root.withdraw()
             file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Word Documents", "*.docx")])
@@ -143,40 +145,61 @@ class TxtFunctions():
                 else:
                     with open(file_path, 'r+', encoding='cp1251') as file:
                         self.ids.txt1.text = file.read()
+        except BadZipFile:
+            pass
+        except FileNotFoundError:
+            pass
+        except IOError:
+            pass
+        except PermissionError:
+            pass
+        except Exception as e:
+            pass
 
-        def save_text_to_file(self, *args):
-            file_path = filedialog.asksaveasfilename(defaultextension=".txt",
-                                                     filetypes=[("Text Files", "*.txt"), ("Word Documents", "*.docx")])
-            if file_path:
-                with open(file_path, 'w', encoding='utf-8') as file:
-                    file.write(self.ids.txt1.text)
-                    # Если файл имеет расширение .docx, то сохраняем его в формате docx
-                    if file_path.endswith(".docx"):
-                        document = Document()
-                        document.add_paragraph(self.ids.txt1.text)
-                        document.save(file_path)
 
-        # метод для увеличения размера шрифта
-        def increase_font_size1(self):
-            self.ids.txt1.font_size += 2
+    def save_text_to_file(self, *args):
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt",
+                                                 filetypes=[("Text Files", "*.txt"), ("Word Documents", "*.docx")])
+        if file_path:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(self.ids.txt1.text)
+                # Если файл имеет расширение .docx, то сохраняем его в формате docx
+                if file_path.endswith(".docx"):
+                    document = Document()
+                    document.add_paragraph(self.ids.txt1.text)
+                    document.save(file_path)
 
-        # метод для уменьшения размера шрифта
-        def decrease_font_size1(self):
-            self.ids.txt1.font_size -= 2
+    # метод для увеличения размера шрифта
+    def increase_font_size1(self):
+        self.ids.txt1.font_size += 2
+
+    # метод для уменьшения размера шрифта
+    def decrease_font_size1(self):
+        self.ids.txt1.font_size -= 2
 
 class SecondText(BoxLayout):
     def open_22_file_dialog(self, *args):
-        root = Tk()
-        root.withdraw()
-        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Word Documents", "*.docx")])
-        if file_path:
-            if file_path.endswith(".docx"):
-                document = Document(file_path)
-                self.ids.txt22.text = "\n".join([para.text for para in document.paragraphs])
-            else:
-                with open(file_path, 'r+', encoding='utf-8') as file:
-                    self.ids.txt22.text = file.read()
-
+        try:
+            root = Tk()
+            root.withdraw()
+            file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("Word Documents", "*.docx")])
+            if file_path:
+                if file_path.endswith(".docx"):
+                    document = Document(file_path)
+                    self.ids.txt22.text = "\n".join([para.text for para in document.paragraphs])
+                else:
+                    with open(file_path, 'r+', encoding='utf-8') as file:
+                        self.ids.txt22.text = file.read()
+        except BadZipFile:
+            pass
+        except FileNotFoundError:
+            pass
+        except IOError:
+            pass
+        except PermissionError:
+            pass
+        except Exception as e:
+            pass
     def save_22_text_to_file(self, *args):
         file_path = filedialog.asksaveasfilename(defaultextension=".txt",
                                                  filetypes=[("Text Files", "*.txt"), ("Word Documents", "*.docx")])
