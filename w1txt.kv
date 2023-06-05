@@ -4,11 +4,17 @@
         md_bg_color: get_color_from_hex("#010101")
         BoxLayout:
             orientation: 'vertical'
-            size_hint: 1, .15
+            size_hint: 1, 0.15
+            canvas.before:
+                Color:
+                    rgba: 169/255, 251/255, 215/255, 0.4 # Цвет фона (фиолетовый)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [15, 15, 15, 15]
             BoxLayout: # панель кнопок 1-ая сточка
                 id: topbuttons
                 size_hint: 1, .5
-
                 MDIconButton:
                     icon: "file-music"
                     pos_hint:{"center_x": .5, "center_y": .5}
@@ -18,12 +24,16 @@
                     pos_hint:{ "center_y": .5}
                     adaptive_height: True
                     on_release: root.play_video()
-
                 MDIconButton:
                     icon: "chevron-left"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
                     on_release: root.rewindminus()
+                MDIconButton:
+                    id: stop_audio
+                    icon: "stop-circle-outline"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.stop_audio()
                 MDIconButton:
                     id: play_pause_button
                     icon: "play-pause"
@@ -45,19 +55,16 @@
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
                     on_release: root.unmute()
-
-#                MDIconButton:
-#                    icon: "book-information-variant"
-#                    pos_hint:{"center_x": .5, "center_y": .5}
-#                    adaptive_height: True
                 Label:
-
                 MDIconButton:
                     icon: "microphone-message"
                     pos_hint:{"center_x": .5, "center_y": .5}
                     adaptive_height: True
                     on_release: root.spech_recogn()
-                
+
+            Label:
+                size_hint: 1, 0.01
+
             MDBoxLayout: # текущее время поспроизведения
                 size_hint: 1, .2
                 MDLabel:
@@ -67,14 +74,12 @@
                     bold: True
                     halign: "center"
                     size_hint: .1, 1
-
                 MDSlider:
                     id: seek_slider
                     min: 0
                     max: 1
                     hint: False
                     on_touch_move: root.on_seek_slider_value(self, self.value)
-
                 MDLabel: # время всей аудиозаписи
                     id: totalduration
                     text: "0:00:00"
@@ -82,19 +87,24 @@
                     bold: True
                     halign: "center"
                     size_hint: .1, 1
-
-
-
-
+            Label:
+                size_hint: 1, 0.1
 
         BoxLayout: # разбиение нижней области вертикально на 2 части
             orientation:'horizontal'
             id: bta
+            canvas.before:
+                Color:
+                    rgba: 178/255, 228/255, 219/255, 0.4 # Цвет фона (фиолетовый)
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [15, 15, 15, 15]
             BoxLayout: # разбиение на области с кнопками и область ввода текста(левая)
                 orientation: "vertical"
                 BoxLayout:
                     orientation:'horizontal'
-                    size_hint: 1, .1
+                    size_hint: 1, .07
                     id: textbuttonsarea
                     MDIconButton:
                         icon: "folder-open-outline"
@@ -116,11 +126,6 @@
                         pos_hint:{"center_x": .5, "center_y": .5}
                         adaptive_height: True
                         on_release: root.increase_font_size1()
-                    MDIconButton:
-                        icon:"cogs"
-                        pos_hint:{"center_x": .5, "center_y": .5}
-                        adaptive_height: True
-                        on_release: root.open_settings_popup()
                     Label:
                     MDIconButton:
                         icon: "dock-window"
@@ -128,142 +133,95 @@
                         adaptive_height: True
                         on_press:
                             root.txt2()
-
                 BoxLayout:
                     TextInput:
-                        text: "text editor area 1!"
+                        text: "Добро пожаловть в BelScribe!"
                         auto_indent: "False"
                         base_direction: "ltr"
+                        background_color: get_color_from_hex("ECFEF6")
                         id: txt1
 
-
-
-
+#        canvas.before:
+#                Color:
+#                    rgba: 178/255, 228/255, 219/255, 0.7
+#                RoundedRectangle:
+#                    pos: self.pos
+#                    size: self.size
+#                    radius: [15, 15, 15, 15]
         BoxLayout:
             size_hint: 1, .02
+            canvas.before:
+                Color:
+                    rgba: 169/255, 251/255, 215/255, 0.4 #
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
             MDLabel:
                 halign:"center"
-                font_size: "11px"
+                font_size: "14px"
                 text:"Имя файла:"
             MDLabel:
                 halign:"center"
-                font_size: "11px"
+                font_size: "14px"
                 text:"Длительность:"
             MDLabel:
                 halign:"center"
                 text:"Рармер файла:"
-                font_size: "11px"
+                font_size: "14px"
             MDLabel:
                 halign:"center"
                 text:"Частота дискретизации: "
-                font_size: "11px"
+                font_size: "14px"
             MDLabel:
                 halign:"center"
                 text:"Частота звука:"
-                font_size: "11px"
+                font_size: "14px"
         BoxLayout:
             size_hint: 1, .03
+            canvas.before:
+                Color:
+                    rgba: 169/255, 251/255, 215/255, 0.4 #
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
             MDLabel:
                 id: mfname
                 halign:"center"
-                font_size: "11px"
+                font_size: "14px"
                 text:
             MDLabel:
                 halign:"center"
                 id: mfdur
-                font_size: "11px"
+                font_size: "14px"
                 text:
             MDLabel:
                 halign:"center"
                 id: mfsize
                 text:
-                font_size: "11px"
+                font_size: "14px"
             MDLabel:
                 halign:"center"
                 id: mfdiscr
                 text:
-                font_size: "11px"
+                font_size: "14px"
             MDLabel:
                 id: mffreq
                 halign:"center"
                 text:
-                font_size: "11px"
+                font_size: "14px"
 
-<SettingsPopup>:
-    title: 'Shortcut Settings'
-    size_hint: 0.9, 0.9
-
-    BoxLayout:
-        orientation: 'vertical'
-        spacing: '5dp'
-
-        GridLayout:
-            cols: 2
-            spacing: '5dp'
-
-            Label:
-                text: "Ctrl+1"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+1']
-                hint_text: "<M1>"
-
-            Label:
-                text: "Ctrl+2"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+2']
-                hint_text: "<M2>"
-
-            Label:
-                text: "Ctrl+3"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+3']
-                hint_text: "<M3>"
-
-            Label:
-                text: "Ctrl+4"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+4']
-                hint_text: "<Ж1>"
-
-            Label:
-                text: "Ctrl+5"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+5']
-                hint_text: "<Ж2>"
-
-            Label:
-                text: "Ctrl+6"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+6']
-                hint_text: "<Ж3>"
-
-            Label:
-                text: "Ctrl+7"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+7']
-                hint_text: "<Неразборчивая речь>"
-
-            Label:
-                text: "Ctrl+8"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+8']
-                hint_text: "<Н>"
-
-            Label:
-                text: "Ctrl+9"
-            TextInput:
-                text: root.shortcut_labels['Ctrl+9']
-                hint_text: "<О>"
-        Button:
-            size_hint: (1, 0.1)
-            text: 'Save'
-            on_release: root.save_settings()
-
-<SecondText@BoxLayout>:
+<Text2Func@BoxLayout>:
     orientation: "vertical"
+    canvas.before:
+        Color:
+            rgba: 178/255, 228/255, 219/255, 0 # Цвет фона (фиолетовый)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [15, 15, 15, 15]
     BoxLayout:
         orientation:'horizontal'
-        size_hint: 1, .1
+        size_hint: 1, .07
         MDIconButton:
             icon: "folder-open-outline"
             pos_hint:{"center_x": .5, "center_y": .5}
@@ -282,14 +240,14 @@
             pos_hint:{"center_x": .5, "center_y": .5}
             adaptive_height: True
             on_release: root.increase_font_size2()
-
     TextInput:
-        text: "text editor area 2!"
+        text: "Добро пожаловть в BelScribe!"
         base_direction: "ltr"
+        background_color: get_color_from_hex("ECFEF6")
         id: txt22
 
-<VideoDisabel@MDIconButton>:
-    icon: "video-box-off"
-    pos_hint:{"center_x": .5, "center_y": .5}
-    adaptive_height: True
-    on_release: root.offvideo()
+#<VideoDisabel@MDIconButton>:
+#    icon: "video-box-off"
+#    pos_hint:{"center_x": .5, "center_y": .5}
+#    adaptive_height: True
+#    on_release: root.offvideo()

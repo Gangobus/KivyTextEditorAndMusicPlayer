@@ -11,11 +11,10 @@ class MainApp(MDApp):
         Window.size = [1600, 800]
         self.compare_mode = False
         self.highlight_color = (255, 0, 0, 1)
-        Builder.load_file("w1txt.kv")
+        Builder.load_file('w1txt.kv')
 
         sm = ScreenManager()
         sm.add_widget(WindowInterface(name="S1T"))
-
         return sm
 
 def run_app():
