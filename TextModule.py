@@ -4,12 +4,13 @@ from tkinter import Tk, filedialog
 import keyboard
 import subprocess
 import os
+import time
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from zipfile import BadZipFile
 import win32com.client as win32
 
-
+#основной класс для работы с текстом
 class Text1Func():
     def __init__(self, shortcut_labels=None, **kwargs):
         print("init")
@@ -65,8 +66,8 @@ class Text1Func():
         keyboard.add_hotkey("Alt+9", self.insert_text_from_shortcut, args=(self.shortcut_labels['Alt+9'],))
         keyboard.add_hotkey("Alt+0", self.print_formatted_time)
 
+    #вствка текста зависящего от нажатой кнопки в основной текст
     def add_text_to_input(self):
-        print("add_text_to_input")
         a1 = self.ids.txt1.text
         cursor_pos = self.ids.txt1.cursor[0]
         line_start = a1.rfind('\n', 0, cursor_pos) + 1
@@ -74,29 +75,22 @@ class Text1Func():
 
         def insert_text(dt):
             self.ids.txt1.insert_text(text_to_insert)
-
         Clock.schedule_once(insert_text)
 
+    #метод для обновления текушего времени воспроизведения
     def set_formatted_time(self, formatted_time):
-        print("set_formatted_time")
         self.formatted_time = formatted_time
-        print(self.formatted_time)
 
+    # метод для вставки текушего времени воспроизведения в качестве текстовой метки
     def print_formatted_time(self):
-        print("print_formatted_time")
         time_text = ("<" + self.formatted_time + ">")
         Clock.schedule_once(lambda dt: self.ids.txt1.insert_text(time_text), 0)
-        print(self.formatted_time)
+    #метод для вставки текстовых меток
 
     def insert_text_from_shortcut(self, text_to_insert):
-        print("insert_text_from_shortcut")
         Clock.schedule_once(lambda dt: self.ids.txt1.insert_text(text_to_insert), 0)
-        def spech_recogn(self):
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            exe_dir = os.path.join(current_dir, "auto_text_from_audio")
-            exe_path = os.path.join(exe_dir, "voice-recognition.exe")
-            subprocess.Popen(exe_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
 
+    #метод для перревода интерфейса в режим работы с двумя текстами
     def txt2(self):
         secondtext = Text2Func()
         if self.secondtext in self.ids.bta.children:
@@ -104,6 +98,7 @@ class Text1Func():
         else:
             self.ids.bta.add_widget(self.secondtext)
 
+    #открытие текстовых файлов через диалоговое окно
     def open_txt_file_dialog(self, *args):
         try:
             root = Tk()
@@ -140,6 +135,7 @@ class Text1Func():
         except Exception as e:
             pass
 
+    #сохранение текстовых файлов через диалоговое окно
     def save_text_to_file(self, *args):
         try:
             file_path = filedialog.asksaveasfilename(defaultextension=".txt",
@@ -173,20 +169,26 @@ class Text1Func():
         except Exception as e:
             pass
 
+    #увеличение размера шрифта первого текста
     def increase_font_size1(self):
         self.ids.txt1.font_size += 2
 
+    #уменьшение размера шрифта первого текста
     def decrease_font_size1(self):
         self.ids.txt1.font_size -= 2
 
+    # запуск модуля распознования речи
     def spech_recogn(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         exe_dir = os.path.join(current_dir, "auto_text_from_audio")
         exe_path = os.path.join(exe_dir, "voice-recognition.exe")
-        subprocess.Popen(exe_path, creationflags=subprocess.CREATE_NEW_CONSOLE)
-class Text2Func(BoxLayout):
-    def open_22_file_dialog(self, *args):
+        files_dir = os.path.join(exe_dir, "vosk-model-ru-0.42")
+        subprocess.Popen([exe_path, files_dir], creationflags=subprocess.CREATE_NEW_CONSOLE, cwd=exe_dir)
 
+#класс для работы с вторым текстом
+class Text2Func(BoxLayout):
+    #открытие текстового файла второго текста
+    def open_22_file_dialog(self, *args):
         try:
             root = Tk()
             root.withdraw()
@@ -222,6 +224,7 @@ class Text2Func(BoxLayout):
         except Exception as e:
             pass
 
+    # сохранение текстового файла для второго текста
     def save_22_text_to_file(self, *args):
         try:
             file_path = filedialog.asksaveasfilename(defaultextension=".txt",
@@ -254,9 +257,10 @@ class Text2Func(BoxLayout):
             pass
         except Exception as e:
             pass
-
+    #увеличение размера шрифта второго текста
     def increase_font_size2(self):
         self.ids.txt22.font_size += 2
 
+    #уменьшение размера шрифта второго текста
     def decrease_font_size2(self):
         self.ids.txt22.font_size -= 2

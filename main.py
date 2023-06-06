@@ -6,17 +6,19 @@ from kivy.uix.screenmanager import ScreenManager
 from Window import WindowInterface
 
 class MainApp(MDApp):
+    #создание окна приложения
     def build(self):
         print('mainprocess1')
         Window.size = [1600, 800]
         self.compare_mode = False
         self.highlight_color = (255, 0, 0, 1)
-        Builder.load_file('w1txt.kv')
+        Builder.load_file('Interfase.kv')
 
         sm = ScreenManager()
         sm.add_widget(WindowInterface(name="S1T"))
         return sm
 
+#запуск приложения
 def run_app():
     MainApp().run()
 

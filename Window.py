@@ -1,17 +1,19 @@
 #Window.py
 from kivy.uix.screenmanager import Screen
-from AudioModule import Sound
+from MediaModule import Sound
 from TextModule import Text1Func
 from kivy.clock import Clock
 import keyboard
 
-
+#класс  для интерфейса(окна)
 class WindowInterface(Text1Func, Screen, Sound):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         sound = Sound()
         self.hotkeys_event = None
         self.hotkeys_event = Clock.schedule_once(self.text_keys)
+
+    #привязка горячих клваиш
     def text_keys(self, *args):
         print("text_keys")
         keyboard.remove_all_hotkeys()
@@ -41,4 +43,3 @@ class WindowInterface(Text1Func, Screen, Sound):
         keyboard.add_hotkey("F3", self.rewindplus)
         keyboard.add_hotkey("F2", self.rewindminus)
         keyboard.add_hotkey("F4", self.playandpause)
-        keyboard.add_hotkey("esc", self.esc_press)

@@ -29,13 +29,12 @@ class Sound(BoxLayout):
         self.playtime_event = None
         self.play_buffered_sound_event = None
 
+    #метод для коректного вызова метода открытия аудиофайла
     def on_open_music_file_dialog(self, *args):
         Clock.schedule_once(self.open_music_file_dialog)
-        print("on_open_music_file_dialog")
-
+    #метод открытия аудиофайла через диалоговое окно
     def open_music_file_dialog(self, *args):
         try:
-            print("open_music_file_dialog")
             root = Tk()
             root.withdraw()
 
@@ -98,9 +97,8 @@ class Sound(BoxLayout):
             pass
         except Exception as e:
             pass
-
+    #воспроизведение/пауза аудио
     def playandpause(self):
-        print("playandpause")
         if self.play_pause_status == False:
             self.play_pause_status = True
             self.play_music()
@@ -108,6 +106,7 @@ class Sound(BoxLayout):
             self.play_pause_status = False
             self.stop_music()
 
+    #остановка воспроизведения
     def stop_audio(self):
         if self.play_pause_status == True:
             self.play_pause_status = False
@@ -115,16 +114,8 @@ class Sound(BoxLayout):
             self.last_played_pos = 0
 
 
-    def esc_press(self):
-        print("esc_press")
-        if self.current_sound:
-            self.playandpause()
-            pos = self.current_sound.get_pos() - 3
-            self.current_sound.seek(pos)
-            self.last_played_pos = self.last_played_pos - 3
-
+    #запуск и подготовка к воспроизведению аудио
     def play_music(self, *args):
-        print("play_music")
         if self.current_sound:
             if self.last_played_pos:
                 self.current_sound.play()
@@ -135,22 +126,25 @@ class Sound(BoxLayout):
                 self.current_sound.stop()
                 self.current_sound.seek(0)
             Clock.schedule_once(self.play_buffered_sound, 1)
+        if self.current_sound == None:
+            self.on_open_music_file_dialog()
+            self.stop_music()
 
+    #воспроизведение аудио
     def play_buffered_sound(self, dt):
-        print("play_buffered_sound")
         self.current_sound.play()
         self.update_slider(dt)
         self.playtime_event = Clock.schedule_interval(self.update_playtime, 0.2)
         self.slider_event = Clock.schedule_interval(self.update_slider, 0.1)
 
+    #обновление положения слайдера перемотки
     def update_slider(self, dt):
-        print("update_slider")
         if self.current_sound and self.current_sound.state == 'play':
             current_pos = self.current_sound.get_pos()
             self.ids.seek_slider.value = current_pos / self.current_sound.length
 
+    #обновлние отбображемого времени воспроизведения аудио
     def update_playtime(self, dt):
-        print("update_playtime")
         if self.current_sound and self.current_sound.state == 'play':
             hours, remainder = divmod(self.current_sound.get_pos(), 3600)
             minutes, seconds = divmod(remainder, 60)
@@ -158,19 +152,18 @@ class Sound(BoxLayout):
             self.ids.musictimenow.text = self.formatted_time
             self.set_formatted_time(self.formatted_time)
 
+    # метод для передачи информации о текущем времени восрпоизведения
     def get_formatted_time(self):
-        print("get_formatted_time")
         return self.formatted_time
 
-
+    #метод для перемотки аудио перемешением слайдера
     def on_seek_slider_value(self, instance, value):
-        print("on_seek_slider_value")
         if self.current_sound and self.current_sound.state == 'play':
             pos = value * self.current_sound.length
             self.current_sound.seek(pos)
 
+    #метод остановки воспроизведения аудио
     def stop_music(self, *args):
-        print("stop_music")
         if self.current_sound:
             Clock.unschedule(self.playtime_event)
             Clock.unschedule(self.slider_event)
@@ -182,8 +175,8 @@ class Sound(BoxLayout):
             Clock.unschedule(self.update_slider)
             Clock.unschedule(self.update_playtime)
 
+    #метод перемотки аудио на 3 секунды вперёд
     def rewindplus(self):
-        print("rewindplus")
         if self.current_sound:
             if self.current_sound and self.current_sound.state == 'play':
                 pos = self.current_sound.get_pos() + 3
@@ -193,8 +186,8 @@ class Sound(BoxLayout):
         else:
             pass
 
+    # метод перемотки аудио на 3 секунды назад
     def rewindminus(self):
-        print("rewindminus")
         if self.current_sound:
             if self.current_sound and self.current_sound.state == 'play':
                 pos = self.current_sound.get_pos() - 3
@@ -204,16 +197,26 @@ class Sound(BoxLayout):
                 self.last_played_pos = self.last_played_pos - 3
         else:
             pass
+
+    # метод отключения звука воспроизведения
     def mute(self):
-        print("mute")
         if self.current_sound:
             self.current_sound.volume = 0
 
+    # метод включения звука воспроизведения
     def unmute(self):
-        print("unmute")
         if self.current_sound:
             self.current_sound.volume = self.previous_volume
 
+        # метод для остановки воспроизведения и пермотки аудио на 3 сек назад
+        def esc_press(self):
+            if self.current_sound:
+                self.playandpause()
+                pos = self.current_sound.get_pos() - 3
+                self.current_sound.seek(pos)
+                self.last_played_pos = self.last_played_pos - 3
+
+    #метод выбора видеофайла
     def play_video(self):
         if self.video_player is not None:
             self.stop_video()
@@ -228,13 +231,16 @@ class Sound(BoxLayout):
         self.video_player.state = 'play'
         self.video_player.options = {'eos': 'stop'}
 
+    #метод остановки воспроизведения видео
     def stop_video(self):
         self.on_stop()
         self.ids.bta.remove_widget(self.video_player)
         self.video_player = None
 
+    # метод приостановки воспроизведения видео
     def on_pause(self):
         self.video_player.state = 'pause'
 
+    # метод отключения видеоплеера
     def on_stop(self):
         self.video_player.state = 'stop'
